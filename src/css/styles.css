@@ -1,0 +1,324 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.topbar {
+    height: 70px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    padding: 10px 20px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    overflow-x: auto;
+}
+
+.main-content {
+    flex: 1;
+    position: relative;
+}
+
+#scene-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+h1 {
+    color: #4a5568;
+    margin: 0;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    min-width: auto;
+}
+
+.control-group h2 {
+    color: #2d3748;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.control-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.file-upload {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-label {
+    display: block;
+    padding: 6px 12px;
+    background: #667eea;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-weight: 500;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.file-label:hover {
+    background: #5a67d8;
+}
+
+.draw-button {
+    padding: 6px 12px;
+    background: #48bb78;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+
+.draw-button:hover {
+    background: #38a169;
+}
+
+.draw-button.active {
+    background: #e53e3e;
+}
+
+.draw-button.active:hover {
+    background: #c53030;
+}
+
+.status-info {
+    padding: 3px 6px;
+    background: rgba(237, 242, 247, 0.6);
+    border-radius: 3px;
+    border-left: 2px solid #667eea;
+}
+
+.status-text {
+    color: #4a5568;
+    font-size: 11px;
+    margin: 1px 0;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.controls-info {
+    background: rgba(255, 248, 220, 0.9);
+    border-left: 4px solid #d69e2e;
+}
+
+/* PCD控制面板样式 */
+.pcd-controls-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 280px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    z-index: 1000;
+    display: none; /* 默认隐藏，有PCD文件时显示 */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.panel-header {
+    color: #2d3748;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.control-section {
+    margin-bottom: 20px;
+}
+
+.control-section h3 {
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider-container {
+    margin-bottom: 15px;
+}
+
+.slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #718096;
+}
+
+.slider-value {
+    background: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    color: #2d3748;
+    min-width: 60px;
+    text-align: center;
+}
+
+.slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 13px;
+    color: #4a5568;
+    cursor: pointer;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.info-item {
+    background: rgba(237, 242, 247, 0.8);
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.info-item-label {
+    font-size: 11px;
+    color: #718096;
+    margin-bottom: 2px;
+}
+
+.info-item-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.reset-button {
+    width: 100%;
+    padding: 8px;
+    background: #ed8936;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.reset-button:hover {
+    background: #dd6b20;
+}

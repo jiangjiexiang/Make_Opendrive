@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenDRIVE地图编辑器 V1.0</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+    <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <h1>🗺️ OpenDRIVE编辑器</h1>
+            
+            <!-- 点云文件加载 -->
+            <div class="control-group">
+                <h2>📊</h2>
+                <div class="control-content">
+                    <div class="file-upload">
+                        <input type="file" id="pcdFileInput" class="file-input" accept=".pcd">
+                        <label for="pcdFileInput" class="file-label">选择PCD文件</label>
+                    </div>
+                    <div class="loading" id="loadingIndicator">
+                        <div class="loading-spinner"></div>
+                        <span>加载中...</span>
+                    </div>
+                </div>
+                <div class="status-info">
+                    <div class="status-text" id="fileStatus">未选择文件</div>
+                    <div class="status-text" id="pointCount"></div>
+                </div>
+            </div>
+
+            <!-- 道路绘制 -->
+            <div class="control-group">
+                <h2>🛣️</h2>
+                <button id="drawButton" class="draw-button">开始画路</button>
+                <div class="status-info">
+                    <div class="status-text" id="drawStatus">绘制：关闭</div>
+                    <div class="status-text" id="pointsCount">点数：0</div>
+                </div>
+            </div>
+
+            <!-- 状态信息 -->
+            <div class="control-group">
+                <h2>ℹ️</h2>
+                <div class="status-info">
+                    <div class="status-text">ESC - 退出绘制</div>
+                    <div class="status-text">Ctrl+Z - 撤销</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="scene-container"></div>
+            
+            <!-- PCD控制面板 -->
+            <div id="pcdControlsPanel" class="pcd-controls-panel">
+                <div class="panel-header">📊 点云控制</div>
+                
+                <!-- 基本信息 -->
+                <div class="control-section">
+                    <h3>🗳️ 基本信息</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-item-label">总点数</div>
+                            <div id="totalPoints" class="info-item-value">0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">显示点数</div>
+                            <div id="visiblePoints" class="info-item-value">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 强度过滤 -->
+                <div class="control-section">
+                    <h3>💡 强度过滤</h3>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="intensityFilterEnabled" class="checkbox">
+                        <label for="intensityFilterEnabled" class="checkbox-label">启用强度过滤</label>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>最小强度</span>
+                            <span id="intensityMinValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="intensityMin" class="slider" min="0" max="255" value="0" disabled>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>最大强度</span>
+                            <span id="intensityMaxValue" class="slider-value">255</span>
+                        </div>
+                        <input type="range" id="intensityMax" class="slider" min="0" max="255" value="255" disabled>
+                    </div>
+                </div>
+
+                <!-- 高度过滤 -->
+                <div class="control-section">
+                    <h3>📏 高度过滤</h3>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="heightFilterEnabled" class="checkbox">
+                        <label for="heightFilterEnabled" class="checkbox-label">启用高度过滤</label>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>最小高度 (m)</span>
+                            <span id="heightMinValue" class="slider-value">-10</span>
+                        </div>
+                        <input type="range" id="heightMin" class="slider" min="-50" max="50" value="-10" step="0.1" disabled>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>最大高度 (m)</span>
+                            <span id="heightMaxValue" class="slider-value">10</span>
+                        </div>
+                        <input type="range" id="heightMax" class="slider" min="-50" max="50" value="10" step="0.1" disabled>
+                    </div>
+                </div>
+
+                <!-- 点显示设置 -->
+                <div class="control-section">
+                    <h3>⚙️ 显示设置</h3>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>点大小</span>
+                            <span id="pointSizeValue" class="slider-value">2.0</span>
+                        </div>
+                        <input type="range" id="pointSize" class="slider" min="0.5" max="10" value="2.0" step="0.1">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>采样率 (%)</span>
+                            <span id="samplingRateValue" class="slider-value">100</span>
+                        </div>
+                        <input type="range" id="samplingRate" class="slider" min="1" max="100" value="100">
+                    </div>
+                </div>
+
+                <!-- 重置按钮 -->
+                <button id="resetFilters" class="reset-button">🔄 重置所有过滤器</button>
+                
+                <!-- 测试按钮 -->
+                <div style="margin-top: 10px;">
+                    <button id="createTestPointCloud" class="reset-button" style="background: #ed8936; margin-right: 10px;">🧪 创建测试点云</button>
+                    <button id="forceDisplay" class="reset-button" style="background: #48bb78; margin-right: 10px;">⚡ 强制显示</button>
+                    <button id="rotatePointCloud" class="reset-button" style="background: #9f7aea;">🔄 旋转90度</button>
+                </div>
+            </div>
+            
+            <!-- 道路控制面板 -->
+            <div id="roadControlsPanel" class="pcd-controls-panel" style="top: 20px; left: 20px; display: none;">
+                <div class="panel-header">🛣️ 道路设计</div>
+                
+                <!-- 道路基本参数 -->
+                <div class="control-section">
+                    <h3>⚙️ 基本参数</h3>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>车道宽度 (m)</span>
+                            <span id="laneWidthValue" class="slider-value">3.5</span>
+                        </div>
+                        <input type="range" id="laneWidth" class="slider" min="2.0" max="5.0" value="3.5" step="0.1">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>车道数量</span>
+                            <span id="laneCountValue" class="slider-value">2</span>
+                        </div>
+                        <input type="range" id="laneCount" class="slider" min="1" max="6" value="2">
+                    </div>
+                </div>
+
+                <!-- 道路类型 -->
+                <div class="control-section">
+                    <h3>🏷️ 道路类型</h3>
+                    <select id="roadType" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                        <option value="motorway">高速公路</option>
+                        <option value="trunk">主干道</option>
+                        <option value="primary">一级公路</option>
+                        <option value="secondary">二级公路</option>
+                        <option value="residential" selected>居住区道路</option>
+                        <option value="service">服务道路</option>
+                    </select>
+                </div>
+
+                <!-- 弯道参数 -->
+                <div class="control-section" id="curveParamsSection" style="display: none;">
+                    <h3>🔄 弯道设置</h3>
+                    <div style="margin-top: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="curveAutoConnect" checked>
+                            <span>自动连接最近点</span>
+                        </label>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="curveForceStraight" checked>
+                            <span>强制直线连接</span>
+                        </label>
+                    </div>
+                    <div style="margin-top: 15px; padding: 10px; background: #f7fafc; border-radius: 4px; font-size: 12px; color: #666;">
+                        💡 系统会根据道路角度和距离自动选择最合适的连接方式
+                    </div>
+                </div>
+
+                <!-- 当前道路信息 -->
+                <div class="control-section">
+                    <h3>📍 当前道路</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-item-label">控制点</div>
+                            <div id="currentRoadPoints" class="info-item-value">0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">长度 (m)</div>
+                            <div id="currentRoadLength" class="info-item-value">0.0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 已保存道路信息 -->
+                <div class="control-section">
+                    <h3>🗂️ 已保存道路</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-item-label">道路数量</div>
+                            <div id="savedRoadsCount" class="info-item-value">0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">交叉口数量</div>
+                            <div id="junctionsCount" class="info-item-value">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 道路操作 -->
+                <div class="control-section">
+                    <h3>🔧 操作</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <button id="undoPoint" class="reset-button" style="background: #ed8936;">撤销点</button>
+                        <button id="clearRoad" class="reset-button" style="background: #e53e3e;">清除</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <button id="saveRoad" class="reset-button" style="background: #48bb78;">保存道路</button>
+                        <button id="createJunction" class="reset-button" style="background: #9f7aea;">创建交叉口</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <button id="createCurve" class="reset-button" style="background: #ed8936;">创建弯道</button>
+                        <button id="cancelCurve" class="reset-button" style="background: #a0aec0; display: none;">取消弯道</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <button id="showAllRoads" class="reset-button" style="background: #4299e1;">显示所有道路</button>
+                        <button id="hideAllRoads" class="reset-button" style="background: #a0aec0;">隐藏所有道路</button>
+                    </div>
+                </div>
+
+                <!-- 导出功能 -->
+                <div class="control-section">
+                    <h3>📤 导出</h3>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <button id="exportOpenDrive" class="reset-button" style="background: #667eea;">导出OpenDRIVE</button>
+                        <button id="exportJSON" class="reset-button" style="background: #9f7aea;">导出JSON</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js 本地文件 -->
+    <script src="src/js/three.min.js"></script>
+    <script src="src/js/OrbitControls.js"></script>
+    <script src="src/js/PCDLoader.js"></script>
+    
+    <!-- 压缩库支持 -->
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+    
+    <script>
+        // 检查依赖是否加载完成的函数
+        function checkDependencies() {
+            const checks = [
+                { name: 'THREE', obj: window.THREE },
+                { name: 'OrbitControls', obj: window.THREE && THREE.OrbitControls },
+                { name: 'PCDLoader', obj: window.THREE && THREE.PCDLoader },
+                { name: 'pako', obj: window.pako }
+            ];
+            
+            const missing = checks.filter(check => !check.obj).map(check => check.name);
+            
+            if (missing.length > 0) {
+                console.log('等待依赖加载:', missing);
+                return false;
+            } else {
+                console.log('✅ 所有依赖加载成功');
+                return true;
+            }
+        }
+        
+        // 等待模块加载完成
+        let checkCount = 0;
+        const maxChecks = 50; // 最多检查5秒
+        
+        function waitForDependencies() {
+            if (checkDependencies()) {
+                // 依赖加载完成，可以初始化应用
+                if (typeof window.initOpenDriveEditor === 'function') {
+                    window.initOpenDriveEditor();
+                }
+                return;
+            }
+            
+            checkCount++;
+            if (checkCount < maxChecks) {
+                setTimeout(waitForDependencies, 100); // 每100ms检查一次
+            } else {
+                // 超时，显示错误
+                console.error('依赖加载超时');
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: #ff4444;
+                    color: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    text-align: center;
+                    z-index: 10000;
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+                `;
+                errorDiv.innerHTML = `
+                    <h3>❌ 依赖加载失败</h3>
+                    <p>Three.js组件加载超时，请检查网络连接</p>
+                    <button onclick="location.reload()" style="
+                        background: white;
+                        color: #ff4444;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        margin-top: 10px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    ">刷新页面</button>
+                `;
+                document.body.appendChild(errorDiv);
+            }
+        }
+        
+        // 页面加载完成后开始检查
+        window.addEventListener('load', waitForDependencies);
+    </script>
+    
+    <script src="src/opendrive-editor.js"></script>
+</body>
+</html>
