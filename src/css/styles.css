@@ -614,3 +614,473 @@ h1 {
 .validation-status.warning {
     color: #ed8936;
 }
+
+/* 导出面板特定样式 */
+#exportPanel {
+    width: 320px;
+}
+
+#exportPanel .control-section {
+    margin-bottom: 18px;
+}
+
+#exportPanel .info-grid {
+    margin-bottom: 12px;
+}
+
+#exportPanel .file-label {
+    background: #667eea;
+    transition: all 0.2s ease;
+}
+
+#exportPanel .file-label:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* 导出按钮特殊样式 */
+#exportPanel .reset-button {
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+#exportPanel .reset-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 警告提示框样式 */
+.export-warning {
+    padding: 10px;
+    background: #fef5e7;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #744210;
+    border-left: 4px solid #f6ad55;
+    margin-bottom: 15px;
+}
+
+/* 信息提示框样式 */
+.export-info {
+    padding: 10px;
+    background: #f7fafc;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* 导出模态对话框样式 */
+.export-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 10000 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px;
+    box-sizing: border-box;
+    margin: 0 !important;
+}
+
+.export-modal.show {
+    display: flex !important;
+}
+
+.export-modal-content {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    max-width: 650px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative !important;
+    z-index: 10001 !important;
+    margin: 0 !important;
+    transform: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.export-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 32px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.export-modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.export-modal-header h2 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.close-export-modal {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+
+.close-export-modal:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.export-modal-body {
+    padding: 24px;
+}
+
+.export-section {
+    margin-bottom: 24px;
+}
+
+.export-section h3 {
+    color: #2d3748;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.export-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.export-btn:hover::before {
+    left: 100%;
+}
+
+.export-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    border-color: #667eea;
+    background: linear-gradient(145deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.opendrive-btn:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.json-btn:hover {
+    background: linear-gradient(135deg, #9f7aea 0%, #ed64a6 100%);
+    color: white;
+}
+
+.btn-icon {
+    font-size: 24px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.export-btn:hover .btn-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-text {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #2d3748;
+}
+
+.btn-desc {
+    font-size: 13px;
+    color: #718096;
+    font-weight: 500;
+}
+
+.export-btn:hover .btn-desc {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.import-area {
+    margin-bottom: 20px;
+}
+
+.file-upload-large {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.file-label-large {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    background: #f7fafc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.file-label-large:hover {
+    border-color: #667eea;
+    background: #edf2f7;
+    transform: translateY(-2px);
+}
+
+.upload-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.upload-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.upload-desc {
+    font-size: 14px;
+    color: #718096;
+}
+
+.info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.info-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: #f7fafc;
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+}
+
+.info-icon {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 4px;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-label {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f7fafc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.option-item:hover {
+    background: #edf2f7;
+}
+
+.option-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.option-text {
+    font-size: 14px;
+    color: #4a5568;
+    cursor: pointer;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.action-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refresh-btn {
+    background: #48bb78;
+    color: white;
+}
+
+.refresh-btn:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+}
+
+.clear-btn {
+    background: #e53e3e;
+    color: white;
+}
+
+.clear-btn:hover {
+    background: #c53030;
+    transform: translateY(-1px);
+}
+
+.warning-text {
+    padding: 12px;
+    background: #fef5e7;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #744210;
+    border-left: 4px solid #f6ad55;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .export-modal-content {
+        margin: 10px;
+        max-height: 95vh;
+    }
+    
+    .export-modal-body {
+        padding: 20px;
+    }
+    
+    .export-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-cards {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}

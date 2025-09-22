@@ -5,6 +5,9 @@
 
 class OpenDriveEditor {
     constructor() {
+        console.log('🏗️ 创建OpenDriveEditor实例...');
+        console.log('🔍 检查DOM是否已加载...');
+        
         // Three.js core components
         this.scene = null;
         this.camera = null;
@@ -96,7 +99,9 @@ class OpenDriveEditor {
         };
         
         // DOM elements
+        console.log('🔍 开始查找DOM元素...');
         this.container = document.getElementById('scene-container');
+        console.log('🔍 场景容器:', this.container);
         this.pcdFileInput = document.getElementById('pcdFileInput');
         this.drawButton = document.getElementById('drawButton');
         this.loadingIndicator = document.getElementById('loadingIndicator');
@@ -111,6 +116,19 @@ class OpenDriveEditor {
         this.helpButton = document.getElementById('helpButton');
         this.helpPanel = document.getElementById('helpPanel');
         this.closeHelp = document.getElementById('closeHelp');
+        
+        // Export modal DOM elements
+        this.exportPanelButton = document.getElementById('exportPanelButton');
+        this.exportModal = document.getElementById('exportModal');
+        this.closeExportModal = document.getElementById('closeExportModal');
+        this.exportOpenDriveBtn = document.getElementById('exportOpenDrive');
+        this.importOpenDriveInput = document.getElementById('importOpenDrive');
+        
+        console.log('🔍 构造函数中查找导出按钮:', this.exportPanelButton);
+        console.log('🔍 构造函数中查找模态对话框:', this.exportModal);
+        if (this.exportModal) {
+            console.log('🔍 模态对话框初始display值:', this.exportModal.style.display);
+        }
         
         // PCD control panel DOM elements
         this.pcdControlsPanel = document.getElementById('pcdControlsPanel');
@@ -345,6 +363,9 @@ class OpenDriveEditor {
     }
     
     initEventListeners() {
+        console.log('🎯 开始初始化事件监听器');
+        console.log('🔍 initEventListeners中导出按钮:', this.exportPanelButton);
+        
         // PCD文件选择
         this.pcdFileInput.addEventListener('change', (event) => {
             this.loadPCDFile(event);
@@ -469,10 +490,45 @@ class OpenDriveEditor {
             });
         }
 
-        // JSON导入事件
-        if (this.importJSONInput) {
-            this.importJSONInput.addEventListener('change', (event) => {
-                this.importJSON(event);
+        // OpenDRIVE导入事件
+        if (this.importOpenDriveInput) {
+            this.importOpenDriveInput.addEventListener('change', (event) => {
+                this.importOpenDrive(event);
+            });
+        }
+
+        // 导出模态对话框按钮
+        if (this.exportPanelButton) {
+            console.log('✅ 导出按钮元素找到，添加事件监听器');
+            this.exportPanelButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ 导出按钮被点击！');
+                this.showExportModal();
+            });
+        } else {
+            console.error('❌ 导出按钮元素未找到');
+        }
+
+        // 关闭导出模态对话框按钮
+        if (this.closeExportModal) {
+            console.log('✅ 找到关闭按钮，添加事件监听器');
+            this.closeExportModal.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ 关闭按钮被点击！');
+                this.hideExportModal();
+            });
+        } else {
+            console.error('❌ 未找到关闭按钮元素');
+        }
+
+        // 点击模态对话框背景关闭
+        if (this.exportModal) {
+            this.exportModal.addEventListener('click', (e) => {
+                if (e.target === this.exportModal) {
+                    this.hideExportModal();
+                }
             });
         }
         
@@ -826,9 +882,19 @@ class OpenDriveEditor {
                 });
             }
             
-            if (elements.exportJSON) {
-                elements.exportJSON.addEventListener('click', () => {
-                    this.exportJSON();
+
+            // 导出面板其他按钮
+            const refreshExportInfo = document.getElementById('refreshExportInfo');
+            if (refreshExportInfo) {
+                refreshExportInfo.addEventListener('click', () => {
+                    this.updateExportPanelInfo();
+                });
+            }
+
+            const clearAllData = document.getElementById('clearAllData');
+            if (clearAllData) {
+                clearAllData.addEventListener('click', () => {
+                    this.clearAllData();
                 });
             }
 
@@ -2342,6 +2408,70 @@ class OpenDriveEditor {
         }
     }
 
+    showExportModal() {
+        console.log('🔄 尝试显示模态对话框');
+        if (this.exportModal) {
+            console.log('🔍 模态对话框当前display值:', this.exportModal.style.display);
+            this.exportModal.classList.add('show');
+            console.log('✅ 模态对话框已显示');
+            // 更新导出信息
+            this.updateExportPanelInfo();
+        } else {
+            console.error('❌ 未找到模态对话框元素');
+        }
+    }
+
+    hideExportModal() {
+        console.log('🔄 尝试隐藏模态对话框');
+        if (this.exportModal) {
+            this.exportModal.classList.remove('show');
+            console.log('✅ 模态对话框已隐藏');
+        } else {
+            console.error('❌ 未找到模态对话框元素');
+        }
+    }
+
+    updateExportPanelInfo() {
+        // 更新道路数量
+        const exportRoadsCount = document.getElementById('exportRoadsCount');
+        if (exportRoadsCount) {
+            exportRoadsCount.textContent = this.roads.length;
+        }
+
+        // 更新交叉口数量
+        const exportJunctionsCount = document.getElementById('exportJunctionsCount');
+        if (exportJunctionsCount) {
+            exportJunctionsCount.textContent = this.junctions.length;
+        }
+
+        // 计算总长度
+        const exportTotalLength = document.getElementById('exportTotalLength');
+        if (exportTotalLength) {
+            let totalLength = 0;
+            this.roads.forEach(road => {
+                if (road.points && road.points.length > 1) {
+                    for (let i = 1; i < road.points.length; i++) {
+                        const dx = road.points[i].x - road.points[i-1].x;
+                        const dy = road.points[i].y - road.points[i-1].y;
+                        totalLength += Math.sqrt(dx * dx + dy * dy);
+                    }
+                }
+            });
+            exportTotalLength.textContent = totalLength.toFixed(1);
+        }
+
+        // 更新最后保存时间
+        const exportLastSaved = document.getElementById('exportLastSaved');
+        if (exportLastSaved) {
+            if (this.lastSavedTime) {
+                const date = new Date(this.lastSavedTime);
+                exportLastSaved.textContent = date.toLocaleString('zh-CN');
+            } else {
+                exportLastSaved.textContent = '从未';
+            }
+        }
+    }
+
     deleteSelectedPoint() {
         if (this.currentRoadPoints.length > 0) {
             this.undoLastPoint();
@@ -3540,6 +3670,9 @@ class OpenDriveEditor {
         // 显示成功消息
         this.showSuccess(`道路已保存：${road.id}`);
         
+        // 更新导出面板信息
+        this.updateExportPanelInfo();
+        
         // 清除当前绘制（但保留已保存的道路）
         this.clearCurrentRoad();
     }
@@ -3552,26 +3685,303 @@ class OpenDriveEditor {
         
         console.log('📤 开始导出OpenDRIVE...');
         
-        const openDriveXML = this.generateOpenDriveXML();
+        // 导出标准OpenDRIVE格式，包含元数据和验证信息
+        const openDriveXML = this.generateOpenDriveXML(true, true);
         this.downloadFile(openDriveXML, 'road_map.xodr', 'application/xml');
+        
+        // 更新最后保存时间
+        this.lastSavedTime = new Date().toISOString();
         
         console.log('✅ OpenDRIVE导出完成');
     }
     
-    exportJSON() {
-        const data = {
-            roads: this.roads,
-            metadata: {
-                version: '1.0',
-                created: new Date().toISOString(),
-                pointCloudFile: this.originalPointCloudData ? this.originalPointCloudData.fileName : null
+
+    importOpenDrive(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        console.log('📥 开始导入OpenDRIVE文件:', file.name);
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const xmlContent = e.target.result;
+                this.parseOpenDriveXML(xmlContent);
+                console.log('✅ OpenDRIVE文件导入成功');
+                this.showSuccess('OpenDRIVE文件导入成功！');
+                this.updateExportPanelInfo();
+            } catch (error) {
+                console.error('❌ OpenDRIVE文件解析失败:', error);
+                this.showError('OpenDRIVE文件解析失败: ' + error.message);
             }
         };
+
+        reader.onerror = () => {
+            console.error('❌ 文件读取失败');
+            this.showError('文件读取失败');
+        };
+
+        reader.readAsText(file);
+    }
+
+    parseOpenDriveXML(xmlContent) {
+        console.log('🔍 开始解析OpenDRIVE XML...');
         
-        const jsonStr = JSON.stringify(data, null, 2);
-        this.downloadFile(jsonStr, 'road_map.json', 'application/json');
+        // 创建XML解析器
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
         
-        console.log('✅ JSON导出完成');
+        // 检查解析错误
+        const parseError = xmlDoc.getElementsByTagName('parsererror')[0];
+        if (parseError) {
+            throw new Error('XML格式错误: ' + parseError.textContent);
+        }
+
+        // 清空现有数据
+        this.roads = [];
+        this.junctions = [];
+        this.clearCurrentRoad();
+        
+        console.log('✅ XML解析成功，开始提取数据...');
+
+        // 解析道路
+        const roads = xmlDoc.getElementsByTagName('road');
+        console.log(`🔍 找到 ${roads.length} 条道路`);
+        
+        for (let i = 0; i < roads.length; i++) {
+            const road = roads[i];
+            const roadId = road.getAttribute('id');
+            const roadName = road.getAttribute('name') || `Road_${roadId}`;
+            
+            console.log(`🔍 解析道路 ${i + 1}: ID=${roadId}, Name=${roadName}`);
+            
+            // 解析道路几何
+            const planView = road.getElementsByTagName('planView')[0];
+            if (planView) {
+                const geometries = planView.getElementsByTagName('geometry');
+                console.log(`🔍 道路 ${roadId} 有 ${geometries.length} 个几何段`);
+                
+                const roadPoints = [];
+                
+                for (let j = 0; j < geometries.length; j++) {
+                    const geom = geometries[j];
+                    const openDriveX = parseFloat(geom.getAttribute('x'));
+                    const openDriveY = parseFloat(geom.getAttribute('y'));
+                    const s = parseFloat(geom.getAttribute('s'));
+                    const length = parseFloat(geom.getAttribute('length'));
+                    const hdg = parseFloat(geom.getAttribute('hdg')); // 方向角
+                    
+                    console.log(`🔍 几何段 ${j + 1}: OpenDRIVE坐标 x=${openDriveX}, y=${openDriveY}, s=${s}, length=${length}, hdg=${hdg}`);
+                    
+                    if (!isNaN(openDriveX) && !isNaN(openDriveY) && !isNaN(length)) {
+                        // 坐标转换：OpenDRIVE的y对应Three.js的z
+                        const threeX = openDriveX;
+                        const threeZ = openDriveY; // OpenDRIVE的y是Three.js的z
+                        
+                        // 添加起点（除了第一个几何段，其他几何段的起点通常与上一个几何段的终点相同）
+                        if (j === 0 || roadPoints.length === 0) {
+                            roadPoints.push({ x: threeX, y: 0, z: threeZ, s, length, hdg });
+                            console.log(`🔍 几何段 ${j + 1} 起点: Three.js坐标 x=${threeX}, y=0, z=${threeZ}, s=${s}`);
+                        }
+                        
+                        // 计算并添加终点
+                        const endX = threeX + length * Math.cos(hdg);
+                        const endZ = threeZ + length * Math.sin(hdg);
+                        const endS = s + length;
+                        
+                        roadPoints.push({ x: endX, y: 0, z: endZ, s: endS, length: 0, hdg });
+                        
+                        console.log(`🔍 几何段 ${j + 1} 终点: Three.js坐标 x=${endX}, y=0, z=${endZ}, s=${endS}`);
+                    }
+                }
+                
+                console.log(`🔍 道路 ${roadId} 解析出 ${roadPoints.length} 个有效点`);
+                
+                if (roadPoints.length > 0) {
+                    // 创建道路对象
+                    const roadData = {
+                        id: roadId,
+                        name: roadName,
+                        points: roadPoints.map(p => ({ x: p.x, y: p.y, z: p.z, s: p.s })),
+                        length: roadPoints.length > 0 ? roadPoints[roadPoints.length - 1].s : 0, // 道路总长度
+                        parameters: {
+                            laneCount: 2, // 默认2车道
+                            laneWidth: 3.5, // 默认车道宽度3.5米
+                            speedLimit: 50 // 默认限速50km/h
+                        },
+                        type: 'imported',
+                        created: new Date().toISOString()
+                    };
+                    
+                    this.roads.push(roadData);
+                    this.renderSavedRoad(roadData);
+                    console.log(`✅ 道路 ${roadId} 解析并渲染完成`);
+                } else {
+                    console.warn(`⚠️ 道路 ${roadId} 没有有效的几何点`);
+                }
+            } else {
+                console.warn(`⚠️ 道路 ${roadId} 没有planView元素`);
+            }
+        }
+
+        // 解析交叉口
+        const junctions = xmlDoc.getElementsByTagName('junction');
+        console.log(`🔍 找到 ${junctions.length} 个交叉口`);
+        
+        for (let i = 0; i < junctions.length; i++) {
+            const junction = junctions[i];
+            const junctionId = junction.getAttribute('id');
+            const junctionName = junction.getAttribute('name') || `Junction_${junctionId}`;
+            
+            console.log(`🔍 解析交叉口 ${i + 1}: ID=${junctionId}, Name=${junctionName}`);
+            
+            // 解析交叉口位置
+            const junctionPoints = junction.getElementsByTagName('point');
+            if (junctionPoints.length > 0) {
+                const point = junctionPoints[0];
+                const openDriveX = parseFloat(point.getAttribute('x'));
+                const openDriveY = parseFloat(point.getAttribute('y'));
+                
+                console.log(`🔍 交叉口 ${junctionId} OpenDRIVE位置: x=${openDriveX}, y=${openDriveY}`);
+                
+                if (!isNaN(openDriveX) && !isNaN(openDriveY)) {
+                    // 坐标转换：OpenDRIVE的y对应Three.js的z
+                    const threeX = openDriveX;
+                    const threeZ = openDriveY; // OpenDRIVE的y是Three.js的z
+                    
+                    const junctionData = {
+                        id: junctionId,
+                        name: junctionName,
+                        center: { x: threeX, y: 0, z: threeZ },
+                        position: { x: threeX, y: 0, z: threeZ },
+                        connections: [], // 导入的交叉口暂时没有连接信息
+                        connectedRoads: [], // 导入的交叉口暂时没有连接的道路
+                        type: 'imported',
+                        created: new Date().toISOString()
+                    };
+                    
+                    this.junctions.push(junctionData);
+                    this.visualizeJunction(junctionData);
+                    console.log(`✅ 交叉口 ${junctionId} 解析并渲染完成: Three.js坐标 x=${threeX}, y=0, z=${threeZ}`);
+                } else {
+                    console.warn(`⚠️ 交叉口 ${junctionId} 位置坐标无效`);
+                }
+            } else {
+                console.warn(`⚠️ 交叉口 ${junctionId} 没有位置点`);
+            }
+        }
+
+        console.log(`📊 导入完成: ${this.roads.length} 条道路, ${this.junctions.length} 个交叉口`);
+        
+        // 调整相机位置到导入的道路中心
+        this.adjustCameraToImportedRoads();
+    }
+
+    adjustCameraToImportedRoads() {
+        if (this.roads.length === 0) {
+            console.log('⚠️ 没有道路数据，跳过相机调整');
+            return;
+        }
+
+        console.log('📷 调整相机位置到导入的道路中心...');
+
+        // 计算所有道路的边界盒
+        const allPoints = [];
+        this.roads.forEach(road => {
+            road.points.forEach(point => {
+                allPoints.push(new THREE.Vector3(point.x, point.y, point.z));
+            });
+        });
+
+        if (allPoints.length === 0) {
+            console.log('⚠️ 没有有效的道路点，跳过相机调整');
+            return;
+        }
+
+        // 计算边界盒
+        const box = new THREE.Box3().setFromPoints(allPoints);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+
+        console.log('📏 导入道路边界信息:');
+        console.log('- 中心点:', center);
+        console.log('- 尺寸:', size);
+        console.log('- 最大尺寸:', maxDim);
+
+        // 计算合适的相机距离
+        const distance = maxDim * 2;
+        
+        // 设置相机位置（俯视角度）
+        this.camera.position.set(
+            center.x + distance * 0.3,
+            center.y + distance * 0.8,
+            center.z + distance * 0.3
+        );
+        
+        // 设置相机目标为道路中心
+        this.controls.target.copy(center);
+        
+        // 设置相机控制限制
+        this.controls.maxDistance = distance * 4;
+        this.controls.minDistance = distance * 0.1;
+        this.controls.update();
+
+        console.log('📷 相机已调整到导入道路中心:');
+        console.log('- 相机位置:', this.camera.position);
+        console.log('- 相机目标:', this.controls.target);
+        console.log('- 相机距离:', distance.toFixed(2));
+
+        // 强制更新渲染
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    clearAllData() {
+        // 确认对话框
+        if (!confirm('确定要清空所有数据吗？此操作将删除所有道路和交叉口，且不可撤销！')) {
+            return;
+        }
+
+        // 清空道路数据
+        this.roads = [];
+        this.junctions = [];
+        this.currentRoadPoints = [];
+        this.currentRoad = null;
+        this.selectedRoad = null;
+        this.lastSavedTime = null;
+
+        // 清空场景中的道路对象
+        this.clearAllSavedRoads();
+
+        // 重置状态
+        this.isDrawingMode = false;
+        this.isJunctionMode = false;
+        this.isCurveMode = false;
+        this.isRoadEditMode = false;
+
+        // 更新UI
+        this.updateRoadCounts();
+        this.updateExportPanelInfo();
+
+        // 更新按钮状态
+        const drawButton = document.getElementById('drawButton');
+        if (drawButton) {
+            drawButton.textContent = '开始画路';
+            drawButton.classList.remove('active');
+        }
+
+        // 隐藏面板
+        const roadControlsPanel = document.getElementById('roadControlsPanel');
+        if (roadControlsPanel) {
+            roadControlsPanel.style.display = 'none';
+        }
+
+        if (this.exportModal) {
+            this.exportModal.style.display = 'none';
+        }
+
+        console.log('✅ 所有数据已清空');
+        this.showSuccess('所有数据已清空');
     }
     
     handleResize() {
@@ -3662,31 +4072,68 @@ class OpenDriveEditor {
         setTimeout(() => successDiv.remove(), 3000);
     }
     
-    generateOpenDriveXML() {
-        const header = this.generateOpenDriveHeader();
+    generateOpenDriveXML(includeMetadata = true, includeValidation = true) {
+        const header = this.generateOpenDriveHeader(includeMetadata);
         const roads = this.roads.map(road => this.generateRoadXML(road)).join('\n');
         const junctions = this.junctions.map(junction => this.generateJunctionXML(junction)).join('\n');
         
-        return `<?xml version="1.0" encoding="UTF-8"?>
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <OpenDRIVE>
     ${header}
     ${roads}
-    ${junctions}
+    ${junctions}`;
+
+        // 添加验证信息注释
+        if (includeValidation && (this.validationErrors.length > 0 || this.validationWarnings.length > 0)) {
+            xml += `
+    <!-- 验证信息 -->
+    <!-- 错误: ${this.validationErrors.length} 个 -->
+    <!-- 警告: ${this.validationWarnings.length} 个 -->`;
+        }
+
+        xml += `
 </OpenDRIVE>`;
+        
+        return xml;
     }
     
-    generateOpenDriveHeader() {
+    generateOpenDriveHeader(includeMetadata = true) {
         const now = new Date();
-        return `<header revMajor="1" revMinor="4" name="Generated Map" version="1.0"
+        let header = `<header revMajor="1" revMinor="4" name="Generated Map" version="1.0"
                  date="${now.toISOString().split('T')[0]}" 
-                 north="0.0" south="0.0" east="0.0" west="0.0" vendor="OpenDRIVE Editor">
+                 north="0.0" south="0.0" east="0.0" west="0.0" vendor="OpenDRIVE Editor">`;
+
+        if (includeMetadata) {
+            header += `
         <geoReference><![CDATA[+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs]]></geoReference>
+        <!-- 元数据信息 -->
+        <!-- 总道路数: ${this.roads.length} -->
+        <!-- 总交叉口数: ${this.junctions.length} -->
+        <!-- 创建时间: ${now.toISOString()} -->
+        <!-- 点云文件: ${this.originalPointCloudData ? this.originalPointCloudData.fileName : '无'} -->`;
+        } else {
+            header += `
+        <geoReference><![CDATA[+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs]]></geoReference>`;
+        }
+
+        header += `
     </header>`;
+        
+        return header;
     }
     
     generateRoadXML(road) {
         const roadLength = road.length;
-        const roadId = parseInt(road.id.split('_')[1]) || 1;
+        // 修复ID生成逻辑，确保每个道路有唯一的ID
+        let roadId;
+        if (road.id.includes('_')) {
+            roadId = parseInt(road.id.split('_')[1]) || 1;
+        } else {
+            // 如果ID不包含下划线，使用道路在数组中的索引+1
+            roadId = this.roads.indexOf(road) + 1;
+        }
+        
+        console.log(`🔍 生成道路XML: 原始ID=${road.id}, 生成ID=${roadId}, 点数=${road.points.length}, 长度=${roadLength.toFixed(2)}m`);
         
         // 生成几何体部分
         const geometries = this.generateGeometryXML(road.points, roadLength);
@@ -3700,7 +4147,7 @@ class OpenDriveEditor {
         // 生成连接信息
         const linkInfo = this.generateRoadLinkXML(road, roadId, junctionId);
         
-        return `<road name="${road.id}" length="${roadLength.toFixed(6)}" id="${roadId}" junction="${junctionId}">
+        return `<road name="Road_${roadId}" length="${roadLength.toFixed(6)}" id="${roadId}" junction="${junctionId}">
         <link>
             ${linkInfo}
         </link>
@@ -3721,7 +4168,12 @@ class OpenDriveEditor {
     findJunctionForRoad(road) {
         for (const junction of this.junctions) {
             if (junction.connectedRoads.includes(road)) {
-                return parseInt(junction.id.split('_')[1]) || 1;
+                // 修复交叉口ID生成
+                if (junction.id.includes('_')) {
+                    return parseInt(junction.id.split('_')[1]) || 1;
+                } else {
+                    return this.junctions.indexOf(junction) + 1;
+                }
             }
         }
         return -1; // 没有交叉口连接
@@ -3729,9 +4181,8 @@ class OpenDriveEditor {
     
     generateRoadLinkXML(road, roadId, junctionId) {
         if (junctionId === -1) {
-            // 没有交叉口，使用简单的道路连接
-            return `<predecessor elementType="road" elementId="${roadId - 1}" contactPoint="end"/>
-            <successor elementType="road" elementId="${roadId + 1}" contactPoint="start"/>`;
+            // 没有交叉口，不添加连接信息（让OpenDRIVE工具自动处理）
+            return '';
         } else {
             // 有交叉口连接
             return `<predecessor elementType="junction" elementId="${junctionId}" contactPoint="start"/>
@@ -3745,6 +4196,7 @@ class OpenDriveEditor {
         let geometries = [];
         let s = 0;
         
+        // 为每两个连续点创建一个几何段
         for (let i = 0; i < points.length - 1; i++) {
             const p1 = points[i];
             const p2 = points[i + 1];
@@ -3756,13 +4208,16 @@ class OpenDriveEditor {
             
             const hdg = Math.atan2(p2.z - p1.z, p2.x - p1.x);
             
-            geometries.push(
-                `<geometry s="${s.toFixed(16)}" x="${p1.x.toFixed(16)}" y="${p1.z.toFixed(16)}" hdg="${hdg.toFixed(16)}" length="${length.toFixed(16)}">
-                    <line/>
-                </geometry>`
-            );
-            
-            s += length;
+            // 确保几何段长度大于0
+            if (length > 0.001) {
+                geometries.push(
+                    `<geometry s="${s.toFixed(16)}" x="${p1.x.toFixed(16)}" y="${p1.z.toFixed(16)}" hdg="${hdg.toFixed(16)}" length="${length.toFixed(16)}">
+                        <line/>
+                    </geometry>`
+                );
+                
+                s += length;
+            }
         }
         
         return geometries.join('\n            ');
@@ -3814,11 +4269,24 @@ class OpenDriveEditor {
     }
     
     generateJunctionXML(junction) {
-        const junctionId = parseInt(junction.id.split('_')[1]) || 1;
+        // 修复交叉口ID生成逻辑
+        let junctionId;
+        if (junction.id.includes('_')) {
+            junctionId = parseInt(junction.id.split('_')[1]) || 1;
+        } else {
+            // 如果ID不包含下划线，使用交叉口在数组中的索引+1
+            junctionId = this.junctions.indexOf(junction) + 1;
+        }
         
         // 生成连接道路的引用
         const connections = junction.connectedRoads.map((road, index) => {
-            const roadId = parseInt(road.id.split('_')[1]) || (index + 1);
+            // 修复连接道路的ID生成
+            let roadId;
+            if (road.id.includes('_')) {
+                roadId = parseInt(road.id.split('_')[1]) || (index + 1);
+            } else {
+                roadId = this.roads.indexOf(road) + 1;
+            }
             return `        <connection id="${index}" incomingRoad="${roadId}" connectingRoad="${roadId}" contactPoint="start">
             <laneLink from="1" to="1"/>
         </connection>`;
@@ -4634,11 +5102,25 @@ class OpenDriveEditor {
         
         
         // 确保弯道起点和终点与道路端点完全匹配
+        // 使用精确的端点坐标，避免浮点数精度问题
+        const preciseStart1 = new THREE.Vector3(
+            Math.round(start1.x * 1000000) / 1000000,
+            Math.round(start1.y * 1000000) / 1000000,
+            Math.round(start1.z * 1000000) / 1000000
+        );
+        const preciseStart2 = new THREE.Vector3(
+            Math.round(start2.x * 1000000) / 1000000,
+            Math.round(start2.y * 1000000) / 1000000,
+            Math.round(start2.z * 1000000) / 1000000
+        );
+        
+        console.log(`🔍 精确连接点: 起点=${preciseStart1}, 终点=${preciseStart2}`);
+        
         return {
-            start1: start1,  // 弯道起点 = 道路1端点
-            end1: start1,    // 道路1连接点
-            start2: start2,  // 道路2连接点  
-            end2: start2,    // 弯道终点 = 道路2端点
+            start1: preciseStart1,  // 弯道起点 = 道路1端点（精确）
+            end1: preciseStart1,    // 道路1连接点
+            start2: preciseStart2,  // 道路2连接点  
+            end2: preciseStart2,    // 弯道终点 = 道路2端点（精确）
             distance: distance,
             road1Direction: road1Direction,
             road2Direction: road2Direction,
@@ -4736,8 +5218,24 @@ class OpenDriveEditor {
     
     generateStraightConnection(start1, start2) {
         const points = [];
-        points.push({ x: start1.x, y: start1.y, z: start1.z });
-        points.push({ x: start2.x, y: start2.y, z: start2.z });
+        
+        // 使用精确的坐标，避免浮点数精度问题
+        const preciseStart1 = {
+            x: Math.round(start1.x * 1000000) / 1000000,
+            y: Math.round(start1.y * 1000000) / 1000000,
+            z: Math.round(start1.z * 1000000) / 1000000
+        };
+        const preciseStart2 = {
+            x: Math.round(start2.x * 1000000) / 1000000,
+            y: Math.round(start2.y * 1000000) / 1000000,
+            z: Math.round(start2.z * 1000000) / 1000000
+        };
+        
+        points.push(preciseStart1);
+        points.push(preciseStart2);
+        
+        console.log(`🔗 直线连接: 起点=${preciseStart1}, 终点=${preciseStart2}`);
+        
         return points;
     }
     
@@ -6122,5 +6620,7 @@ class OpenDriveEditor {
 // 初始化函数，由HTML中的依赖检查调用
 window.initOpenDriveEditor = function() {
     console.log('🌟 启动OpenDRIVE地图编辑器...');
+    console.log('🔍 开始创建OpenDriveEditor实例');
     window.editor = new OpenDriveEditor();
+    console.log('✅ OpenDriveEditor实例创建完成');
 };

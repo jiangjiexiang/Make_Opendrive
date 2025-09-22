@@ -49,18 +49,11 @@
                 </div>
             </div>
 
-            <!-- 保存地图 -->
+            <!-- 导出/导入 -->
             <div class="control-group">
                 <h2>💾</h2>
                 <div class="control-content">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                        <button id="exportOpenDrive" class="reset-button" style="background: #667eea; font-size: 12px; padding: 8px 12px;">📤 OpenDRIVE</button>
-                        <button id="exportJSON" class="reset-button" style="background: #9f7aea; font-size: 12px; padding: 8px 12px;">📤 JSON</button>
-                    </div>
-                    <div class="file-upload" style="margin-bottom: 0;">
-                        <input type="file" id="importJSON" class="file-input" accept=".json" style="display: none;">
-                        <label for="importJSON" class="file-label" style="width: 100%; text-align: center; font-size: 12px; padding: 8px 12px;">📥 导入JSON</label>
-                    </div>
+                    <button id="exportPanelButton" class="draw-button" style="background: #667eea;">导出/导入</button>
                 </div>
                 <div class="status-info">
                     <div class="status-text" id="savedRoadsCount">道路：0</div>
@@ -293,6 +286,7 @@
                 </div>
             </div>
             
+
             <!-- 道路控制面板 -->
             <div id="roadControlsPanel" class="pcd-controls-panel" style="top: 80px; left: 20px; display: none; position: fixed; z-index: 1000; width: 300px;">
                 <div class="panel-header">🛣️ 道路设计</div>
@@ -538,6 +532,95 @@
                     <div class="help-item">
                         <kbd>双击</kbd>
                         <span>插入新点</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导出/导入模态对话框 -->
+        <div id="exportModal" class="export-modal" style="display: none;">
+            <div class="export-modal-content">
+                <div class="export-modal-header">
+                    <h2>💾 导出/导入地图</h2>
+                    <button id="closeExportModal" class="close-export-modal">×</button>
+                </div>
+                
+                <div class="export-modal-body">
+                    <!-- 导出功能 -->
+                    <div class="export-section">
+                        <h3>📤 导出地图</h3>
+                        <div class="export-buttons">
+                            <button id="exportOpenDrive" class="export-btn opendrive-btn">
+                                <div class="btn-icon">🗺️</div>
+                                <div class="btn-text">
+                                    <div class="btn-title">导出 OpenDRIVE</div>
+                                    <div class="btn-desc">标准 OpenDRIVE XML 格式</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 导入功能 -->
+                    <div class="export-section">
+                        <h3>📥 导入地图</h3>
+                        <div class="import-area">
+                            <div class="file-upload-large">
+                                <input type="file" id="importOpenDrive" class="file-input" accept=".xodr,.xml" style="display: none;">
+                                <label for="importOpenDrive" class="file-label-large">
+                                    <div class="upload-icon">📁</div>
+                                    <div class="upload-text">选择 OpenDRIVE 文件</div>
+                                    <div class="upload-desc">支持 .xodr 和 .xml 格式</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 地图信息 -->
+                    <div class="export-section">
+                        <h3>📊 地图信息</h3>
+                        <div class="info-cards">
+                            <div class="info-card">
+                                <div class="info-icon">🛣️</div>
+                                <div class="info-content">
+                                    <div class="info-label">道路数量</div>
+                                    <div id="exportRoadsCount" class="info-value">0</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-icon">🚦</div>
+                                <div class="info-content">
+                                    <div class="info-label">交叉口数量</div>
+                                    <div id="exportJunctionsCount" class="info-value">0</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-icon">📏</div>
+                                <div class="info-content">
+                                    <div class="info-label">总长度</div>
+                                    <div id="exportTotalLength" class="info-value">0.0m</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-icon">⏰</div>
+                                <div class="info-content">
+                                    <div class="info-label">最后保存</div>
+                                    <div id="exportLastSaved" class="info-value">从未</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- 操作按钮 -->
+                    <div class="export-section">
+                        <h3>🔧 操作</h3>
+                        <div class="action-buttons">
+                            <button id="refreshExportInfo" class="action-btn refresh-btn">🔄 刷新信息</button>
+                            <button id="clearAllData" class="action-btn clear-btn">🗑️ 清空数据</button>
+                        </div>
+                        <div class="warning-text">
+                            ⚠️ 清空数据将删除所有道路和交叉口，此操作不可撤销
+                        </div>
                     </div>
                 </div>
             </div>
