@@ -34,10 +34,37 @@
             <!-- 道路绘制 -->
             <div class="control-group">
                 <h2>🛣️</h2>
-                <button id="drawButton" class="draw-button">开始画路</button>
+                <div class="control-content">
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                        <button id="drawButton" class="draw-button">开始画路</button>
+                        <div style="width: 2px; height: 30px; background: linear-gradient(to bottom, #e2e8f0, #cbd5e0, #e2e8f0); border-radius: 1px;"></div>
+                        <button id="startRoadEdit" class="draw-button" style="background: #ed8936;">编辑道路</button>
+                        <button id="stopRoadEdit" class="reset-button" style="background: #a0aec0; display: none;">停止编辑</button>
+                    </div>
+                </div>
                 <div class="status-info">
                     <div class="status-text" id="drawStatus">绘制：关闭</div>
                     <div class="status-text" id="pointsCount">点数：0</div>
+                    <div class="status-text" id="drawingMode">模式：直线</div>
+                </div>
+            </div>
+
+            <!-- 保存地图 -->
+            <div class="control-group">
+                <h2>💾</h2>
+                <div class="control-content">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <button id="exportOpenDrive" class="reset-button" style="background: #667eea; font-size: 12px; padding: 8px 12px;">📤 OpenDRIVE</button>
+                        <button id="exportJSON" class="reset-button" style="background: #9f7aea; font-size: 12px; padding: 8px 12px;">📤 JSON</button>
+                    </div>
+                    <div class="file-upload" style="margin-bottom: 0;">
+                        <input type="file" id="importJSON" class="file-input" accept=".json" style="display: none;">
+                        <label for="importJSON" class="file-label" style="width: 100%; text-align: center; font-size: 12px; padding: 8px 12px;">📥 导入JSON</label>
+                    </div>
+                </div>
+                <div class="status-info">
+                    <div class="status-text" id="savedRoadsCount">道路：0</div>
+                    <div class="status-text" id="junctionsCount">交叉口：0</div>
                 </div>
             </div>
 
@@ -47,12 +74,28 @@
                 <div class="status-info">
                     <div class="status-text">ESC - 退出绘制</div>
                     <div class="status-text">Ctrl+Z - 撤销</div>
+                    <div class="status-text">Space - 开始/结束</div>
+                    <div class="status-text">Delete - 删除点</div>
                 </div>
+            </div>
+
+            <!-- 快捷键帮助面板 -->
+            <div class="control-group">
+                <h2>⌨️</h2>
+                <button id="helpButton" class="help-button" title="显示快捷键帮助">?</button>
             </div>
         </div>
 
         <div class="main-content">
             <div id="scene-container"></div>
+            
+            <!-- 绘制进度条 -->
+            <div class="drawing-progress" id="drawingProgress" style="display: none; position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(0,0,0,0.8); padding: 15px 25px; border-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <div class="progress-bar" style="width: 200px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div class="progress-fill" id="progressFill" style="height: 100%; background: linear-gradient(90deg, #48bb78, #38a169); border-radius: 4px; transition: width 0.3s ease; width: 0%;"></div>
+                </div>
+                <span class="progress-text" id="progressText" style="color: white; font-size: 14px; font-weight: 500; text-align: center; display: block;">准备绘制...</span>
+            </div>
             
             <!-- PCD控制面板 -->
             <div id="pcdControlsPanel" class="pcd-controls-panel">
@@ -149,8 +192,109 @@
                 </div>
             </div>
             
+            <!-- 道路编辑面板 -->
+            <div id="roadEditPanel" class="pcd-controls-panel" style="top: 80px; left: 20px; display: none; position: fixed; z-index: 1000; width: 300px;">
+                <div class="panel-header">✏️ 道路编辑</div>
+                
+                <!-- 选中道路信息 -->
+                <div class="control-section">
+                    <h3>📍 选中道路</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-item-label">道路ID</div>
+                            <div id="selectedRoadInfo" class="info-item-value">未选择道路</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 道路参数调整 -->
+                <div class="control-section">
+                    <h3>⚙️ 道路参数</h3>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <label for="editLaneWidth">车道宽度 (米)</label>
+                            <span id="editLaneWidthValue">3.5m</span>
+                        </div>
+                        <input type="range" id="editLaneWidth" min="2.0" max="6.0" step="0.1" value="3.5" class="slider">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <label for="editLaneCount">车道数量</label>
+                            <span id="editLaneCountValue">2</span>
+                        </div>
+                        <input type="range" id="editLaneCount" min="1" max="6" step="1" value="2" class="slider">
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="editRoadType" style="display: block; margin-bottom: 5px; font-size: 12px; color: #4a5568;">道路类型</label>
+                        <select id="editRoadType" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                            <option value="highway">高速公路</option>
+                            <option value="arterial">主干道</option>
+                            <option value="collector">次干道</option>
+                            <option value="residential" selected>居住区道路</option>
+                            <option value="service">服务道路</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 弯道调整 -->
+                <div class="control-section" id="curveEditControls" style="display: none;">
+                    <h3>🔄 弯道调整</h3>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <label for="editCurveRadius">弯道弧度</label>
+                            <span id="editCurveRadiusValue">1.0x</span>
+                        </div>
+                        <input type="range" id="editCurveRadius" min="0.1" max="4.0" step="0.1" value="1.0" class="slider">
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="editCurveDirection" style="display: block; margin-bottom: 5px; font-size: 12px; color: #4a5568;">弯道方向</label>
+                        <select id="editCurveDirection" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                            <option value="auto">🔄 自动</option>
+                            <option value="outward">↗️ 向外</option>
+                            <option value="inward">↙️ 向内</option>
+                            <option value="smooth">🌊 平滑</option>
+                        </select>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="editPoint1Extension" style="display: block; margin-bottom: 5px; font-size: 12px; color: #4a5568;">点1延伸方向</label>
+                        <select id="editPoint1Extension" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                            <option value="auto">🔄 自动</option>
+                            <option value="forward">➡️ 向前</option>
+                            <option value="backward">⬅️ 向后</option>
+                        </select>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="editPoint2Extension" style="display: block; margin-bottom: 5px; font-size: 12px; color: #4a5568;">点2延伸方向</label>
+                        <select id="editPoint2Extension" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                            <option value="auto">🔄 自动</option>
+                            <option value="forward">➡️ 向前</option>
+                            <option value="backward">⬅️ 向后</option>
+                        </select>
+                    </div>
+                    <div class="slider-container" style="margin-top: 10px;">
+                        <div class="slider-label">
+                            <label for="editExtensionLength">延伸长度</label>
+                            <span id="editExtensionLengthValue">0.15x</span>
+                        </div>
+                        <input type="range" id="editExtensionLength" min="0.05" max="0.5" step="0.05" value="0.15" class="slider">
+                    </div>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div class="control-section">
+                    <h3>🔧 操作</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <button id="applyRoadEdit" class="reset-button" style="background: #48bb78;">✅ 应用修改</button>
+                        <button id="cancelRoadEdit" class="reset-button" style="background: #e53e3e;">❌ 取消编辑</button>
+                    </div>
+                    <div style="padding: 10px; background: #f7fafc; border-radius: 4px; font-size: 12px; color: #666;">
+                        💡 点击道路进行编辑，调整参数后点击"应用修改"保存
+                    </div>
+                </div>
+            </div>
+            
             <!-- 道路控制面板 -->
-            <div id="roadControlsPanel" class="pcd-controls-panel" style="top: 20px; left: 20px; display: none;">
+            <div id="roadControlsPanel" class="pcd-controls-panel" style="top: 80px; left: 20px; display: none; position: fixed; z-index: 1000; width: 300px;">
                 <div class="panel-header">🛣️ 道路设计</div>
                 
                 <!-- 道路基本参数 -->
@@ -169,6 +313,38 @@
                             <span id="laneCountValue" class="slider-value">2</span>
                         </div>
                         <input type="range" id="laneCount" class="slider" min="1" max="6" value="2">
+                    </div>
+                </div>
+
+                <!-- 精度设置 -->
+                <div class="control-section">
+                    <h3>🎯 精度设置</h3>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="gridEnabled" class="checkbox">
+                        <label for="gridEnabled" class="checkbox-label">启用网格吸附</label>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>网格大小 (m)</span>
+                            <span id="gridSizeValue" class="slider-value">1.0</span>
+                        </div>
+                        <input type="range" id="gridSize" class="slider" min="0.1" max="5.0" value="1.0" step="0.1" disabled>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>点击容错 (px)</span>
+                            <span id="clickToleranceValue" class="slider-value">0.5</span>
+                        </div>
+                        <input type="range" id="clickTolerance" class="slider" min="0.1" max="2.0" value="0.5" step="0.1">
+                    </div>
+                </div>
+
+                <!-- 显示设置 -->
+                <div class="control-section">
+                    <h3>👁️ 显示设置</h3>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="showRoadDirections" class="checkbox" checked>
+                        <label for="showRoadDirections" class="checkbox-label">显示道路方向</label>
                     </div>
                 </div>
 
@@ -196,14 +372,39 @@
                     </div>
                     <div style="margin-top: 10px;">
                         <label style="display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" id="curveForceStraight" checked>
+                            <input type="checkbox" id="curveForceStraight">
                             <span>强制直线连接</span>
                         </label>
                     </div>
+                    
+                    <!-- 弯道方向选择 -->
+                    <div style="margin-top: 15px;">
+                        <h4 style="font-size: 13px; margin-bottom: 8px; color: #4a5568;">弯道方向</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <label style="display: flex; align-items: center; gap: 6px; padding: 8px; background: #f7fafc; border-radius: 4px; cursor: pointer;">
+                                <input type="radio" name="curveDirection" value="auto" checked>
+                                <span style="font-size: 12px;">🔄 自动</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; padding: 8px; background: #f7fafc; border-radius: 4px; cursor: pointer;">
+                                <input type="radio" name="curveDirection" value="outward">
+                                <span style="font-size: 12px;">↗️ 向外</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; padding: 8px; background: #f7fafc; border-radius: 4px; cursor: pointer;">
+                                <input type="radio" name="curveDirection" value="inward">
+                                <span style="font-size: 12px;">↙️ 向内</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; padding: 8px; background: #f7fafc; border-radius: 4px; cursor: pointer;">
+                                <input type="radio" name="curveDirection" value="smooth">
+                                <span style="font-size: 12px;">🌊 平滑</span>
+                            </label>
+                        </div>
+                    </div>
+                    
                     <div style="margin-top: 15px; padding: 10px; background: #f7fafc; border-radius: 4px; font-size: 12px; color: #666;">
-                        💡 系统会根据道路角度和距离自动选择最合适的连接方式
+                        💡 选择弯道方向：向外（凸弯）、向内（凹弯）、平滑（S形）或自动
                     </div>
                 </div>
+
 
                 <!-- 当前道路信息 -->
                 <div class="control-section">
@@ -217,6 +418,29 @@
                             <div class="info-item-label">长度 (m)</div>
                             <div id="currentRoadLength" class="info-item-value">0.0</div>
                         </div>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-item-label">质量评分</div>
+                            <div id="roadQualityScore" class="info-item-value">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">验证状态</div>
+                            <div id="validationStatus" class="info-item-value">未验证</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 道路验证 -->
+                <div class="control-section">
+                    <h3>✅ 道路验证</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <button id="validateRoad" class="reset-button" style="background: #48bb78;">🔍 验证道路</button>
+                        <button id="autoFixRoad" class="reset-button" style="background: #ed8936;">🔧 自动修复</button>
+                    </div>
+                    <div id="validationResults" class="validation-results" style="display: none;">
+                        <div class="validation-errors" id="validationErrors"></div>
+                        <div class="validation-warnings" id="validationWarnings"></div>
                     </div>
                 </div>
 
@@ -239,6 +463,10 @@
                 <div class="control-section">
                     <h3>🔧 操作</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <button id="undoAction" class="reset-button" style="background: #ed8936;">↩️ 撤销</button>
+                        <button id="redoAction" class="reset-button" style="background: #48bb78;">↪️ 重做</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <button id="undoPoint" class="reset-button" style="background: #ed8936;">撤销点</button>
                         <button id="clearRoad" class="reset-button" style="background: #e53e3e;">清除</button>
                     </div>
@@ -256,12 +484,60 @@
                     </div>
                 </div>
 
-                <!-- 导出功能 -->
-                <div class="control-section">
-                    <h3>📤 导出</h3>
-                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
-                        <button id="exportOpenDrive" class="reset-button" style="background: #667eea;">导出OpenDRIVE</button>
-                        <button id="exportJSON" class="reset-button" style="background: #9f7aea;">导出JSON</button>
+
+            </div>
+        </div>
+
+        <!-- 帮助面板 -->
+        <div id="helpPanel" class="help-panel" style="display: none;">
+            <div class="help-header">
+                <h3>⌨️ 快捷键帮助</h3>
+                <button id="closeHelp" class="close-help">×</button>
+            </div>
+            <div class="help-content">
+                <div class="help-section">
+                    <h4>🛣️ 道路绘制</h4>
+                    <div class="help-item">
+                        <kbd>Space</kbd>
+                        <span>开始/结束绘制</span>
+                    </div>
+                    <div class="help-item">
+                        <kbd>ESC</kbd>
+                        <span>取消当前操作</span>
+                    </div>
+                    <div class="help-item">
+                        <kbd>Ctrl+Z</kbd>
+                        <span>撤销上一个点</span>
+                    </div>
+                    <div class="help-item">
+                        <kbd>Delete</kbd>
+                        <span>删除选中的点</span>
+                    </div>
+                </div>
+                <div class="help-section">
+                    <h4>🎯 视图控制</h4>
+                    <div class="help-item">
+                        <kbd>鼠标左键</kbd>
+                        <span>添加路径点</span>
+                    </div>
+                    <div class="help-item">
+                        <kbd>鼠标右键</kbd>
+                        <span>旋转视图</span>
+                    </div>
+                    <div class="help-item">
+                        <kbd>滚轮</kbd>
+                        <span>缩放视图</span>
+                    </div>
+                </div>
+                <div class="help-section">
+                    <h4>🔧 编辑功能</h4>
+                    <div class="help-item">
+                        <kbd>拖拽</kbd>
+                        <span>移动路径点</span>
+                    </div>
+                    <div class="help-item">
+                        <kbd>双击</kbd>
+                        <span>插入新点</span>
                     </div>
                 </div>
             </div>

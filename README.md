@@ -1,183 +1,205 @@
-# OpenDRIVE Map Editor V1.0
+# OpenDRIVE Map Editor V2.0
 
-A web-based OpenDRIVE map editor that supports PCD point cloud data visualization and interactive road centerline drawing.
+A comprehensive web-based OpenDRIVE map editor with advanced road drawing, curve generation, and point cloud visualization capabilities.
 
-## Features
+## ✨ Key Features
 
-### 🔧 Core Technologies
-- **Three.js** - 3D graphics rendering engine
-- **Pure Frontend** - HTML5, CSS3, JavaScript (ES6+)
-- **Responsive Design** - Modern user interface
+### 🛣️ Advanced Road Drawing
+- **Interactive Road Creation** - Click-to-draw road centerlines with real-time visual feedback
+- **Smart Curve Generation** - Automatic curve creation between road endpoints with multiple algorithms
+- **Road Editing System** - Click any road to edit parameters (width, lanes, curvature, extension direction)
+- **Real-time Preview** - Live parameter adjustment with instant visual feedback
+- **Undo/Redo Support** - Full operation history with Ctrl+Z/Ctrl+Y shortcuts
 
-### 📊 Point Cloud Data Visualization
-- Support for loading local PCD format point cloud files
-- Automatic point cloud boundary calculation and camera adjustment
-- Real-time point cloud data statistics display
-- High-performance point cloud rendering with automatic sampling
-- Point cloud filtering (intensity, height, sampling rate)
-- Support for binary_compressed PCD format with pako.js
-- Automatic point cloud orientation detection and correction
-- Error handling for corrupted or abnormal point cloud data
+### 🔄 Curve Generation Algorithms
+- **Multiple Curve Types** - Simple, Outward, Inward, S-curve, and Arc curves
+- **Smart Auto Selection** - Automatic curve type based on road angles and distances
+- **Customizable Parameters** - Adjustable curve radius (0.1x to 4.0x), direction, and extension settings
+- **Smooth Connections** - Advanced algorithms ensure perfect road-to-curve transitions
+- **Extension Controls** - Separate control for start/end point extension direction and length
 
-### 🛣️ Road Drawing Features
-- Interactive road centerline drawing
-- Real-time visual feedback
-- Undo operation support (Ctrl+Z)
-- Point markers display (start/end/middle points)
-- Road parameter configuration (lane width, lane count, road type)
-- Road visualization with 3D meshes
-
-### 🔄 Road Connection Features
-- **Junction Creation** - Connect multiple roads at intersections
-- **Curve Generation** - Create smooth curves between road endpoints
-- **Smart Curve Algorithm** - Automatic curve type selection based on road angles and distances
-- **Road Management** - Save, load, and manage multiple roads
+### 📊 Point Cloud Visualization
+- **PCD Format Support** - Load and visualize point cloud data files
+- **Advanced Filtering** - Filter by intensity, height, and sampling rate
+- **Performance Optimization** - Automatic sampling for large datasets (10M+ points)
+- **Real-time Statistics** - Live point cloud data analysis and display
+- **Direction Arrows** - Visual road direction indicators (toggleable)
 
 ### 🎮 Interactive Controls
-- **Left Mouse Drag** - Rotate view
-- **Right Mouse Drag** - Pan scene
-- **Mouse Wheel** - Zoom view
-- **Left Click in Drawing Mode** - Add path points
-- **ESC Key** - Exit drawing mode
-- **Ctrl+Z** - Undo last added point
+- **3D Navigation** - Mouse controls for rotation, pan, and zoom
+- **Precision Drawing** - Grid snapping and click tolerance settings
+- **Keyboard Shortcuts** - ESC to exit, Ctrl+Z to undo, Space to toggle drawing
+- **Context Menus** - Right-click operations for road management
 
-### 🎛️ Control Panels
-- **PCD Control Panel** - Point cloud filtering and display settings
-- **Road Control Panel** - Road parameters and operations
-- **Test Functions** - Create test point clouds, force display, and manual rotation
-- **Debug Features** - Server-side logging and error reporting
+### 💾 Data Management
+- **OpenDRIVE Export** - Generate standard OpenDRIVE XML files
+- **JSON Import/Export** - Save and load project data
+- **Road Validation** - Automatic validation of road geometry and parameters
+- **Project Persistence** - Save complete project state
 
-## Usage
+## 🚀 Quick Start
 
-### 1. Start the Application
-
-#### Method 1: Python Server (Recommended)
+### 1. Launch the Application
 ```bash
-# Option 1: Use full server script
+# Option 1: Python server (recommended)
 python server.py
 
-# Option 2: Use simple server script
+# Option 2: Simple server
 python run.py
+
+# Option 3: Direct open
+# Open index.html in your browser
 ```
 
-#### Method 2: Direct Open
-Open `index.html` directly in your browser.
-
 ### 2. Load Point Cloud Data
-1. Click "Select PCD File" button in the left panel
-2. Choose a local `.pcd` format point cloud file
-3. Wait for file loading to complete, point cloud will automatically display in 3D scene
+1. Click "Select PCD File" in the left panel
+2. Choose a `.pcd` format point cloud file
+3. Wait for loading to complete
 
-### 3. Draw Road Centerlines
-1. Click "Start Drawing" button to enter drawing mode
-2. Left-click in the 3D scene to add path points
-3. Path points will automatically connect to form road centerlines
-4. Click "End Drawing" or press ESC to complete drawing
+### 3. Draw Roads
+1. Click "开始画路" (Start Drawing) to enter drawing mode
+2. Left-click in the 3D scene to add road points
+3. Click "结束绘制" (End Drawing) or press ESC to complete
 
-### 4. Create Road Connections
-1. **Junctions**: Click "Create Junction" and select two roads to connect
-2. **Curves**: Click "Create Curve" and select two road endpoints to create smooth curves
-3. **Road Management**: Use save, load, and display functions to manage roads
+### 4. Create Curves
+1. Click "创建弯道" (Create Curve) 
+2. Click on two road endpoints to connect them
+3. Choose curve type and adjust parameters in the editing panel
 
-### 5. Point Cloud Controls
-- **Intensity Filtering**: Filter points by intensity values
-- **Height Filtering**: Filter points by height (Y-axis) values
-- **Point Size**: Adjust point cloud point size
-- **Sampling Rate**: Reduce point density for performance
-- **Reset Filters**: Reset all filtering settings
+### 5. Edit Roads
+1. Click "编辑道路" (Edit Road) to enter edit mode
+2. Click any road to select and edit its parameters
+3. Adjust width, lanes, curve radius, extension settings
+4. Click "应用修改" (Apply Changes) to save
 
-### 6. Scene Controls
-- Use mouse to control camera view
-- Use mouse wheel for zooming
-- Camera controls are temporarily disabled in drawing mode
+## 🎛️ Control Panels
 
-## Project Structure
+### Road Drawing Panel
+- **Basic Parameters** - Lane width (2.0-5.0m), lane count (1-6)
+- **Precision Settings** - Grid snapping, click tolerance
+- **Display Settings** - Show/hide road direction arrows
+- **Road Types** - Highway, arterial, collector, residential, service
+
+### Road Editing Panel
+- **Road Parameters** - Width, lane count, road type
+- **Curve Settings** - Radius multiplier, direction, extension controls
+- **Real-time Preview** - Live parameter adjustment
+- **Operations** - Apply changes, cancel editing
+
+### Point Cloud Panel
+- **Filtering** - Intensity range, height range, sampling rate
+- **Display** - Point size, color coding
+- **Statistics** - Point count, data ranges
+- **Reset** - Clear all filters
+
+## 🏗️ Project Structure
 
 ```
 OpenDRIVE-Editor/
-├── index.html              # Main HTML file
-├── src/                    # Source code directory
-│   ├── opendrive-editor.js # Core application logic
+├── index.html                    # Main application interface
+├── src/
+│   ├── opendrive-editor.js      # Core application logic (6000+ lines)
 │   ├── css/
-│   │   └── styles.css      # Application styles
-│   └── js/                 # Three.js libraries
-│       ├── three.min.js    # Three.js core library
-│       ├── OrbitControls.js # Camera controls
-│       └── PCDLoader.js    # PCD file loader
-├── server.py               # Python server (full version)
-├── run.py                  # Python server (simplified version)
-├── README.md               # Project documentation
-└── sample/                 # Sample PCD files (optional)
-    ├── test.pcd           # Sample point cloud
-    └── changfang.pcd      # Sample point cloud
+│   │   └── styles.css           # Application styling
+│   └── js/                      # Three.js libraries
+│       ├── three.min.js         # Three.js core
+│       ├── OrbitControls.js     # Camera controls
+│       └── PCDLoader.js         # PCD file loader
+├── server.py                    # Python development server
+├── run.py                       # Simple server script
+└── README.md                    # This documentation
 ```
 
-## Technical Implementation
+## 🔧 Technical Implementation
 
-### Core Class: OpenDriveEditor
-Main responsibilities:
-- Three.js scene initialization
-- PCD file loading and point cloud rendering
-- Interactive camera control (OrbitControls)
-- Ray casting for precise click detection
-- Dynamic road line generation and updates
-- Road connection and curve generation
-- Point cloud filtering and management
+### Core Technologies
+- **Three.js** - 3D graphics and WebGL rendering
+- **Pure Frontend** - HTML5, CSS3, JavaScript (ES6+)
+- **No Dependencies** - Self-contained application
 
-### Key Technical Points
-1. **Point Cloud Loading**: Uses Three.js PCDLoader for point cloud data loading
-2. **Ray Casting**: Implements precise click detection in 3D scenes through Raycaster
-3. **Dynamic Geometry**: BufferGeometry dynamic updates for real-time line drawing
-4. **Camera Control**: OrbitControls provides smooth 3D navigation experience
-5. **Road Generation**: Smart algorithms for road connections and curve generation
-6. **Data Compression**: Support for binary_compressed PCD format with pako.js
+### Key Algorithms
+- **Ray Casting** - Precise 3D click detection
+- **Bezier Curves** - Smooth curve generation (Quadratic, Cubic, Quartic)
+- **Road Geometry** - 3D mesh generation with proper normals
+- **Point Cloud Processing** - Efficient rendering of large datasets
+- **Grid Snapping** - Precision point placement
 
 ### Advanced Features
-- **Smart Curve Generation**: Automatic curve type selection (straight, arc, S-curve)
-- **Road Visualization**: 3D mesh generation for realistic road display
-- **Point Cloud Filtering**: Real-time filtering by intensity, height, and sampling
-- **Memory Optimization**: Efficient handling of large point cloud files (10M+ points)
-- **Error Handling**: Comprehensive error handling and user feedback
-- **Server Integration**: Python server with logging and CORS support
-- **Point Cloud Recovery**: Automatic fallback for corrupted data
+- **Smart Curve Selection** - Automatic algorithm choice based on geometry
+- **Extension System** - Configurable road extensions for smooth connections
+- **Real-time Validation** - Live geometry and parameter checking
+- **Memory Management** - Efficient handling of large point clouds
+- **Error Recovery** - Robust error handling and user feedback
 
-## Browser Compatibility
-- Chrome (Recommended)
-- Firefox
-- Edge
-- Safari
+## 🎯 Road Drawing Workflow
 
-## Dependencies
-- Three.js (3D graphics library)
-- pako.js (compression library for PCD files)
+1. **Load Point Cloud** - Import PCD data for reference
+2. **Configure Settings** - Set lane width, count, and precision
+3. **Draw Roads** - Click-to-draw road centerlines
+4. **Create Curves** - Connect roads with smooth curves
+5. **Edit Parameters** - Fine-tune road properties
+6. **Export Data** - Generate OpenDRIVE or JSON files
 
-## Development Extensions
+## 🔄 Curve Generation System
 
-This is V1.0 version, future extensions could include:
-- OpenDRIVE format export
-- Support for more point cloud formats (LAS, XYZ, etc.)
-- Road property editing (width, type, etc.)
-- 3D road model generation
-- Terrain editing features
-- Advanced road design tools
-- Real-time collaboration
+### Available Algorithms
+- **Simple Curve** - Basic quadratic Bezier curves
+- **Outward Curve** - Curves that bulge outward
+- **Inward Curve** - Curves that curve inward
+- **S-curve** - Smooth S-shaped transitions
+- **Arc Curve** - Circular arc segments
 
-## License
-MIT License
+### Customization Options
+- **Radius Multiplier** - 0.1x to 4.0x curve intensity
+- **Direction Control** - Forward/backward extension direction
+- **Length Control** - 0.05x to 0.5x extension length
+- **Auto Selection** - Smart algorithm choice
 
-## Contributing
-Welcome to submit Issues and Pull Requests to improve this project!
+## 🌐 Browser Compatibility
 
-## Troubleshooting
+- **Chrome** (Recommended) - Full feature support
+- **Firefox** - Complete compatibility
+- **Edge** - Full functionality
+- **Safari** - Basic support
+
+## 📋 Keyboard Shortcuts
+
+- **Space** - Toggle drawing mode
+- **ESC** - Exit current mode
+- **Ctrl+Z** - Undo last action
+- **Ctrl+Y** - Redo last action
+- **Delete** - Remove last point (in drawing mode)
+
+## 🐛 Troubleshooting
 
 ### Common Issues
-1. **Point Cloud Not Displaying**: Try clicking "Create Test Point Cloud" button
-2. **Large File Loading**: The system automatically uses simplified parsing for large files
-3. **Memory Issues**: Use sampling rate control to reduce point density
-4. **Browser Compatibility**: Ensure your browser supports WebGL
+1. **Point Cloud Not Loading** - Check file format and browser console
+2. **Performance Issues** - Reduce sampling rate for large datasets
+3. **Drawing Not Working** - Ensure you're in drawing mode
+4. **Curves Not Generating** - Check road endpoint selection
 
 ### Debug Features
-- Detailed console logging for troubleshooting
-- Test point cloud generation
-- Force display functionality
-- Error reporting and handling
+- **Console Logging** - Detailed operation logs
+- **Test Functions** - Generate test point clouds
+- **Error Reporting** - Comprehensive error messages
+
+## 🚀 Future Enhancements
+
+- **More Point Cloud Formats** - LAS, XYZ, PLY support
+- **Advanced Road Types** - Highways, intersections, roundabouts
+- **3D Road Models** - Realistic road surface generation
+- **Terrain Integration** - Ground elevation consideration
+- **Collaborative Editing** - Multi-user support
+- **Real-time Validation** - Live OpenDRIVE compliance checking
+
+## 📄 License
+
+MIT License - Free for personal and commercial use
+
+## 🤝 Contributing
+
+Contributions welcome! Please feel free to submit issues and pull requests.
+
+---
+
+**Version 2.0** - Complete road drawing and curve generation system with advanced editing capabilities.
