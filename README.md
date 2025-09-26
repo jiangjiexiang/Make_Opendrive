@@ -1,205 +1,145 @@
-# OpenDRIVE Map Editor V2.0
+# 点云在线查看器 V1.0
 
-A comprehensive web-based OpenDRIVE map editor with advanced road drawing, curve generation, and point cloud visualization capabilities.
+一个专注于点云文件加载、显示和交互的Web应用程序，支持PCD格式点云文件的可视化。
 
-## ✨ Key Features
+## ✨ 主要功能
 
-### 🛣️ Advanced Road Drawing
-- **Interactive Road Creation** - Click-to-draw road centerlines with real-time visual feedback
-- **Smart Curve Generation** - Automatic curve creation between road endpoints with multiple algorithms
-- **Road Editing System** - Click any road to edit parameters (width, lanes, curvature, extension direction)
-- **Real-time Preview** - Live parameter adjustment with instant visual feedback
-- **Undo/Redo Support** - Full operation history with Ctrl+Z/Ctrl+Y shortcuts
+### ☁️ 点云可视化
+- **PCD格式支持** - 加载和显示PCD格式的点云数据文件
+- **高级过滤功能** - 按强度、高度和采样率进行过滤
+- **性能优化** - 自动采样处理大型数据集（1000万+点）
+- **实时统计** - 点云数据分析和显示
+- **交互式控制** - 鼠标控制旋转、平移和缩放
 
-### 🔄 Curve Generation Algorithms
-- **Multiple Curve Types** - Simple, Outward, Inward, S-curve, and Arc curves
-- **Smart Auto Selection** - Automatic curve type based on road angles and distances
-- **Customizable Parameters** - Adjustable curve radius (0.1x to 4.0x), direction, and extension settings
-- **Smooth Connections** - Advanced algorithms ensure perfect road-to-curve transitions
-- **Extension Controls** - Separate control for start/end point extension direction and length
+### 🎮 交互控制
+- **3D导航** - 鼠标控制旋转、平移和缩放
+- **点云操作** - 旋转、重置、强制显示等功能
+- **实时调整** - 点大小、采样率等参数实时调整
+- **过滤控制** - 强度过滤、高度过滤等高级功能
 
-### 📊 Point Cloud Visualization
-- **PCD Format Support** - Load and visualize point cloud data files
-- **Advanced Filtering** - Filter by intensity, height, and sampling rate
-- **Performance Optimization** - Automatic sampling for large datasets (10M+ points)
-- **Real-time Statistics** - Live point cloud data analysis and display
-- **Direction Arrows** - Visual road direction indicators (toggleable)
+### 📊 数据管理
+- **文件加载** - 支持PCD格式点云文件
+- **数据统计** - 显示点云总数、可见点数等信息
+- **测试功能** - 创建测试点云用于演示
 
-### 🎮 Interactive Controls
-- **3D Navigation** - Mouse controls for rotation, pan, and zoom
-- **Precision Drawing** - Grid snapping and click tolerance settings
-- **Keyboard Shortcuts** - ESC to exit, Ctrl+Z to undo, Space to toggle drawing
-- **Context Menus** - Right-click operations for road management
+## 🚀 快速开始
 
-### 💾 Data Management
-- **OpenDRIVE Export** - Generate standard OpenDRIVE XML files
-- **JSON Import/Export** - Save and load project data
-- **Road Validation** - Automatic validation of road geometry and parameters
-- **Project Persistence** - Save complete project state
-
-## 🚀 Quick Start
-
-### 1. Launch the Application
+### 1. 启动应用程序
 ```bash
-# Option 1: Python server (recommended)
+# 选项1: Python服务器（推荐）
 python server.py
 
-# Option 2: Simple server
+# 选项2: 简单服务器
 python run.py
 
-# Option 3: Direct open
-# Open index.html in your browser
+# 选项3: 直接打开
+# 在浏览器中打开 index.html
 ```
 
-### 2. Load Point Cloud Data
-1. Click "Select PCD File" in the left panel
-2. Choose a `.pcd` format point cloud file
-3. Wait for loading to complete
+### 2. 加载点云数据
+1. 点击左侧面板的"选择点云文件"
+2. 选择一个`.pcd`格式的点云文件
+3. 等待加载完成
 
-### 3. Draw Roads
-1. Click "开始画路" (Start Drawing) to enter drawing mode
-2. Left-click in the 3D scene to add road points
-3. Click "结束绘制" (End Drawing) or press ESC to complete
+### 3. 点云操作
+1. 使用鼠标右键拖拽旋转视角
+2. 使用鼠标滚轮缩放
+3. 使用鼠标左键拖拽平移视角
 
-### 4. Create Curves
-1. Click "创建弯道" (Create Curve) 
-2. Click on two road endpoints to connect them
-3. Choose curve type and adjust parameters in the editing panel
+### 4. 调整显示参数
+1. 在右侧控制面板调整点大小
+2. 设置采样率以优化性能
+3. 使用强度过滤和高度过滤功能
 
-### 5. Edit Roads
-1. Click "编辑道路" (Edit Road) to enter edit mode
-2. Click any road to select and edit its parameters
-3. Adjust width, lanes, curve radius, extension settings
-4. Click "应用修改" (Apply Changes) to save
+### 5. 测试功能
+1. 点击"创建测试点云"按钮生成示例数据
+2. 使用"强制显示"按钮刷新显示
+3. 使用"旋转90度"按钮调整点云方向
 
-## 🎛️ Control Panels
+## 🎛️ 控制面板
 
-### Road Drawing Panel
-- **Basic Parameters** - Lane width (2.0-5.0m), lane count (1-6)
-- **Precision Settings** - Grid snapping, click tolerance
-- **Display Settings** - Show/hide road direction arrows
-- **Road Types** - Highway, arterial, collector, residential, service
+### 点云控制面板
+- **基本信息** - 总点数、显示点数统计
+- **强度过滤** - 按强度值范围过滤点云
+- **高度过滤** - 按高度范围过滤点云
+- **显示设置** - 点大小、采样率调整
+- **操作按钮** - 重置过滤器、创建测试点云、强制显示、旋转点云
 
-### Road Editing Panel
-- **Road Parameters** - Width, lane count, road type
-- **Curve Settings** - Radius multiplier, direction, extension controls
-- **Real-time Preview** - Live parameter adjustment
-- **Operations** - Apply changes, cancel editing
-
-### Point Cloud Panel
-- **Filtering** - Intensity range, height range, sampling rate
-- **Display** - Point size, color coding
-- **Statistics** - Point count, data ranges
-- **Reset** - Clear all filters
-
-## 🏗️ Project Structure
+## 🏗️ 项目结构
 
 ```
-OpenDRIVE-Editor/
-├── index.html                    # Main application interface
+点云查看器/
+├── index.html                    # 主应用程序界面
 ├── src/
-│   ├── opendrive-editor.js      # Core application logic (6000+ lines)
+│   ├── opendrive-editor.js      # 核心应用程序逻辑
 │   ├── css/
-│   │   └── styles.css           # Application styling
-│   └── js/                      # Three.js libraries
-│       ├── three.min.js         # Three.js core
-│       ├── OrbitControls.js     # Camera controls
-│       └── PCDLoader.js         # PCD file loader
-├── server.py                    # Python development server
-├── run.py                       # Simple server script
-└── README.md                    # This documentation
+│   │   └── styles.css           # 应用程序样式
+│   └── js/                      # Three.js库文件
+│       ├── three.min.js         # Three.js核心
+│       ├── OrbitControls.js     # 相机控制
+│       └── PCDLoader.js         # PCD文件加载器
+├── server.py                    # Python开发服务器
+├── run.py                       # 简单服务器脚本
+└── README.md                    # 本文档
 ```
 
-## 🔧 Technical Implementation
+## 🔧 技术实现
 
-### Core Technologies
-- **Three.js** - 3D graphics and WebGL rendering
-- **Pure Frontend** - HTML5, CSS3, JavaScript (ES6+)
-- **No Dependencies** - Self-contained application
+### 核心技术
+- **Three.js** - 3D图形和WebGL渲染
+- **纯前端** - HTML5, CSS3, JavaScript (ES6+)
+- **无依赖** - 自包含应用程序
 
-### Key Algorithms
-- **Ray Casting** - Precise 3D click detection
-- **Bezier Curves** - Smooth curve generation (Quadratic, Cubic, Quartic)
-- **Road Geometry** - 3D mesh generation with proper normals
-- **Point Cloud Processing** - Efficient rendering of large datasets
-- **Grid Snapping** - Precision point placement
+### 关键算法
+- **点云处理** - 高效渲染大型数据集
+- **内存管理** - 智能处理大型点云文件
+- **错误恢复** - 强大的错误处理和用户反馈
+- **性能优化** - 自动采样和LOD技术
 
-### Advanced Features
-- **Smart Curve Selection** - Automatic algorithm choice based on geometry
-- **Extension System** - Configurable road extensions for smooth connections
-- **Real-time Validation** - Live geometry and parameter checking
-- **Memory Management** - Efficient handling of large point clouds
-- **Error Recovery** - Robust error handling and user feedback
+## 🎯 点云查看工作流程
 
-## 🎯 Road Drawing Workflow
+1. **加载点云** - 导入PCD数据文件
+2. **调整显示** - 设置点大小和采样率
+3. **应用过滤** - 使用强度和高度过滤
+4. **交互操作** - 旋转、缩放、平移视角
+5. **数据分析** - 查看点云统计信息
 
-1. **Load Point Cloud** - Import PCD data for reference
-2. **Configure Settings** - Set lane width, count, and precision
-3. **Draw Roads** - Click-to-draw road centerlines
-4. **Create Curves** - Connect roads with smooth curves
-5. **Edit Parameters** - Fine-tune road properties
-6. **Export Data** - Generate OpenDRIVE or JSON files
+## 🌐 浏览器兼容性
 
-## 🔄 Curve Generation System
+- **Chrome** (推荐) - 完整功能支持
+- **Firefox** - 完全兼容
+- **Edge** - 完整功能
+- **Safari** - 基本支持
 
-### Available Algorithms
-- **Simple Curve** - Basic quadratic Bezier curves
-- **Outward Curve** - Curves that bulge outward
-- **Inward Curve** - Curves that curve inward
-- **S-curve** - Smooth S-shaped transitions
-- **Arc Curve** - Circular arc segments
+## 🐛 故障排除
 
-### Customization Options
-- **Radius Multiplier** - 0.1x to 4.0x curve intensity
-- **Direction Control** - Forward/backward extension direction
-- **Length Control** - 0.05x to 0.5x extension length
-- **Auto Selection** - Smart algorithm choice
+### 常见问题
+1. **点云无法加载** - 检查文件格式和浏览器控制台
+2. **性能问题** - 对大型数据集降低采样率
+3. **显示异常** - 尝试使用"强制显示"按钮
+4. **内存不足** - 降低采样率或使用较小的点云文件
 
-## 🌐 Browser Compatibility
+### 调试功能
+- **控制台日志** - 详细的操作日志
+- **测试功能** - 生成测试点云
+- **错误报告** - 全面的错误消息
 
-- **Chrome** (Recommended) - Full feature support
-- **Firefox** - Complete compatibility
-- **Edge** - Full functionality
-- **Safari** - Basic support
+## 🚀 未来增强
 
-## 📋 Keyboard Shortcuts
+- **更多点云格式** - LAS, XYZ, PLY支持
+- **高级过滤** - 更多过滤选项
+- **性能优化** - 更好的大型数据集处理
+- **协作功能** - 多用户支持
+- **数据导出** - 支持多种导出格式
 
-- **Space** - Toggle drawing mode
-- **ESC** - Exit current mode
-- **Ctrl+Z** - Undo last action
-- **Ctrl+Y** - Redo last action
-- **Delete** - Remove last point (in drawing mode)
+## 📄 许可证
 
-## 🐛 Troubleshooting
+MIT许可证 - 个人和商业使用免费
 
-### Common Issues
-1. **Point Cloud Not Loading** - Check file format and browser console
-2. **Performance Issues** - Reduce sampling rate for large datasets
-3. **Drawing Not Working** - Ensure you're in drawing mode
-4. **Curves Not Generating** - Check road endpoint selection
+## 🤝 贡献
 
-### Debug Features
-- **Console Logging** - Detailed operation logs
-- **Test Functions** - Generate test point clouds
-- **Error Reporting** - Comprehensive error messages
-
-## 🚀 Future Enhancements
-
-- **More Point Cloud Formats** - LAS, XYZ, PLY support
-- **Advanced Road Types** - Highways, intersections, roundabouts
-- **3D Road Models** - Realistic road surface generation
-- **Terrain Integration** - Ground elevation consideration
-- **Collaborative Editing** - Multi-user support
-- **Real-time Validation** - Live OpenDRIVE compliance checking
-
-## 📄 License
-
-MIT License - Free for personal and commercial use
-
-## 🤝 Contributing
-
-Contributions welcome! Please feel free to submit issues and pull requests.
+欢迎贡献！请随时提交问题和拉取请求。
 
 ---
 
-**Version 2.0** - Complete road drawing and curve generation system with advanced editing capabilities.
+**版本 1.0** - 专注于点云文件加载、显示和交互的Web应用程序。

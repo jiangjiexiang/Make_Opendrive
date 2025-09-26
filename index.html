@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenDRIVE地图编辑器 V1.0</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+    <title>点云在线查看器 V1.0</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☁️</text></svg>">
     <link rel="stylesheet" href="src/css/styles.css">
 </head>
 <body>
     <div class="container">
         <div class="topbar">
-            <h1>🗺️ OpenDRIVE编辑器</h1>
+            <h1>☁️ 点云在线查看器</h1>
             
             <!-- 点云文件加载 -->
             <div class="control-group">
-                <h2>📊</h2>
+                <h2>☁️</h2>
                 <div class="control-content">
                     <div class="file-upload">
                         <input type="file" id="pcdFileInput" class="file-input" accept=".pcd">
-                        <label for="pcdFileInput" class="file-label">选择PCD文件</label>
+                        <label for="pcdFileInput" class="file-label">选择点云文件</label>
                     </div>
                     <div class="loading" id="loadingIndicator">
                         <div class="loading-spinner"></div>
@@ -31,7 +31,8 @@
                 </div>
             </div>
 
-            <!-- 道路绘制 -->
+            <!-- 道路绘制 - 已隐藏 -->
+            <!--
             <div class="control-group">
                 <h2>🛣️</h2>
                 <div class="control-content">
@@ -48,8 +49,10 @@
                     <div class="status-text" id="drawingMode">模式：直线</div>
                 </div>
             </div>
+            -->
 
-            <!-- 导出/导入 -->
+            <!-- 导出/导入 - 已隐藏 -->
+            <!--
             <div class="control-group">
                 <h2>💾</h2>
                 <div class="control-content">
@@ -60,8 +63,10 @@
                     <div class="status-text" id="junctionsCount">交叉口：0</div>
                 </div>
             </div>
+            -->
 
-            <!-- 状态信息 -->
+            <!-- 状态信息 - 已隐藏 -->
+            <!--
             <div class="control-group">
                 <h2>ℹ️</h2>
                 <div class="status-info">
@@ -72,23 +77,25 @@
                 </div>
             </div>
 
-            <!-- 快捷键帮助面板 -->
             <div class="control-group">
                 <h2>⌨️</h2>
                 <button id="helpButton" class="help-button" title="显示快捷键帮助">?</button>
             </div>
+            -->
         </div>
 
         <div class="main-content">
             <div id="scene-container"></div>
             
-            <!-- 绘制进度条 -->
+            <!-- 绘制进度条 - 已隐藏 -->
+            <!--
             <div class="drawing-progress" id="drawingProgress" style="display: none; position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(0,0,0,0.8); padding: 15px 25px; border-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
                 <div class="progress-bar" style="width: 200px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
                     <div class="progress-fill" id="progressFill" style="height: 100%; background: linear-gradient(90deg, #48bb78, #38a169); border-radius: 4px; transition: width 0.3s ease; width: 0%;"></div>
                 </div>
                 <span class="progress-text" id="progressText" style="color: white; font-size: 14px; font-weight: 500; text-align: center; display: block;">准备绘制...</span>
             </div>
+            -->
             
             <!-- PCD控制面板 -->
             <div id="pcdControlsPanel" class="pcd-controls-panel">
@@ -185,11 +192,11 @@
                 </div>
             </div>
             
-            <!-- 道路编辑面板 -->
+            <!-- 道路编辑面板 - 已隐藏 -->
+            <!--
             <div id="roadEditPanel" class="pcd-controls-panel" style="top: 80px; left: 20px; display: none; position: fixed; z-index: 1000; width: 300px;">
                 <div class="panel-header">✏️ 道路编辑</div>
                 
-                <!-- 选中道路信息 -->
                 <div class="control-section">
                     <h3>📍 选中道路</h3>
                     <div class="info-grid">
@@ -200,7 +207,6 @@
                     </div>
                 </div>
                 
-                <!-- 道路参数调整 -->
                 <div class="control-section">
                     <h3>⚙️ 道路参数</h3>
                     <div class="slider-container">
@@ -229,7 +235,6 @@
                     </div>
                 </div>
                 
-                <!-- 弯道调整 -->
                 <div class="control-section" id="curveEditControls" style="display: none;">
                     <h3>🔄 弯道调整</h3>
                     <div class="slider-container">
@@ -273,7 +278,6 @@
                     </div>
                 </div>
                 
-                <!-- 操作按钮 -->
                 <div class="control-section">
                     <h3>🔧 操作</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
@@ -285,13 +289,14 @@
                     </div>
                 </div>
             </div>
+            -->
             
 
-            <!-- 道路控制面板 -->
+            <!-- 道路控制面板 - 已隐藏 -->
+            <!--
             <div id="roadControlsPanel" class="pcd-controls-panel" style="top: 80px; left: 20px; display: none; position: fixed; z-index: 1000; width: 300px;">
                 <div class="panel-header">🛣️ 道路设计</div>
                 
-                <!-- 道路基本参数 -->
                 <div class="control-section">
                     <h3>⚙️ 基本参数</h3>
                     <div class="slider-container">
@@ -310,7 +315,6 @@
                     </div>
                 </div>
 
-                <!-- 精度设置 -->
                 <div class="control-section">
                     <h3>🎯 精度设置</h3>
                     <div class="checkbox-container">
@@ -333,7 +337,6 @@
                     </div>
                 </div>
 
-                <!-- 显示设置 -->
                 <div class="control-section">
                     <h3>👁️ 显示设置</h3>
                     <div class="checkbox-container">
@@ -342,7 +345,6 @@
                     </div>
                 </div>
 
-                <!-- 道路类型 -->
                 <div class="control-section">
                     <h3>🏷️ 道路类型</h3>
                     <select id="roadType" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
@@ -355,7 +357,6 @@
                     </select>
                 </div>
 
-                <!-- 弯道参数 -->
                 <div class="control-section" id="curveParamsSection" style="display: none;">
                     <h3>🔄 弯道设置</h3>
                     <div style="margin-top: 10px;">
@@ -371,7 +372,6 @@
                         </label>
                     </div>
                     
-                    <!-- 弯道方向选择 -->
                     <div style="margin-top: 15px;">
                         <h4 style="font-size: 13px; margin-bottom: 8px; color: #4a5568;">弯道方向</h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -399,8 +399,6 @@
                     </div>
                 </div>
 
-
-                <!-- 当前道路信息 -->
                 <div class="control-section">
                     <h3>📍 当前道路</h3>
                     <div class="info-grid">
@@ -425,7 +423,6 @@
                     </div>
                 </div>
 
-                <!-- 道路验证 -->
                 <div class="control-section">
                     <h3>✅ 道路验证</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
@@ -438,7 +435,6 @@
                     </div>
                 </div>
 
-                <!-- 已保存道路信息 -->
                 <div class="control-section">
                     <h3>🗂️ 已保存道路</h3>
                     <div class="info-grid">
@@ -453,7 +449,6 @@
                     </div>
                 </div>
 
-                <!-- 道路操作 -->
                 <div class="control-section">
                     <h3>🔧 操作</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
@@ -477,12 +472,12 @@
                         <button id="hideAllRoads" class="reset-button" style="background: #a0aec0;">隐藏所有道路</button>
                     </div>
                 </div>
-
-
             </div>
+            -->
         </div>
 
-        <!-- 帮助面板 -->
+        <!-- 帮助面板 - 已隐藏 -->
+        <!--
         <div id="helpPanel" class="help-panel" style="display: none;">
             <div class="help-header">
                 <h3>⌨️ 快捷键帮助</h3>
@@ -536,8 +531,10 @@
                 </div>
             </div>
         </div>
+        -->
 
-        <!-- 导出/导入模态对话框 -->
+        <!-- 导出/导入模态对话框 - 已隐藏 -->
+        <!--
         <div id="exportModal" class="export-modal" style="display: none;">
             <div class="export-modal-content">
                 <div class="export-modal-header">
@@ -546,7 +543,6 @@
                 </div>
                 
                 <div class="export-modal-body">
-                    <!-- 导出功能 -->
                     <div class="export-section">
                         <h3>📤 导出地图</h3>
                         <div class="export-buttons">
@@ -560,7 +556,6 @@
                         </div>
                     </div>
 
-                    <!-- 导入功能 -->
                     <div class="export-section">
                         <h3>📥 导入地图</h3>
                         <div class="import-area">
@@ -575,7 +570,6 @@
                         </div>
                     </div>
 
-                    <!-- 地图信息 -->
                     <div class="export-section">
                         <h3>📊 地图信息</h3>
                         <div class="info-cards">
@@ -610,8 +604,6 @@
                         </div>
                     </div>
 
-
-                    <!-- 操作按钮 -->
                     <div class="export-section">
                         <h3>🔧 操作</h3>
                         <div class="action-buttons">
@@ -625,6 +617,7 @@
                 </div>
             </div>
         </div>
+        -->
     </div>
 
     <!-- Three.js 本地文件 -->
@@ -691,7 +684,7 @@
                 `;
                 errorDiv.innerHTML = `
                     <h3>❌ 依赖加载失败</h3>
-                    <p>Three.js组件加载超时，请检查网络连接</p>
+                    <p>点云查看器组件加载超时，请检查网络连接</p>
                     <button onclick="location.reload()" style="
                         background: white;
                         color: #ff4444;

@@ -1,11 +1,11 @@
 /**
- * OpenDRIVE Map Editor V1.0 - Fixed Version
- * Focused on reliable point cloud display and road drawing
+ * 点云在线查看器 V1.0
+ * 专注于点云文件的加载、显示和交互
  */
 
 class OpenDriveEditor {
     constructor() {
-        console.log('🏗️ 创建OpenDriveEditor实例...');
+        console.log('🏗️ 创建点云查看器实例...');
         console.log('🔍 检查DOM是否已加载...');
         
         // Three.js core components
@@ -103,45 +103,47 @@ class OpenDriveEditor {
         this.container = document.getElementById('scene-container');
         console.log('🔍 场景容器:', this.container);
         this.pcdFileInput = document.getElementById('pcdFileInput');
-        this.drawButton = document.getElementById('drawButton');
+        // 已隐藏的功能 - 道路绘制相关
+        // this.drawButton = document.getElementById('drawButton');
         this.loadingIndicator = document.getElementById('loadingIndicator');
         this.fileStatus = document.getElementById('fileStatus');
         this.pointCount = document.getElementById('pointCount');
-        this.drawStatus = document.getElementById('drawStatus');
-        this.pointsCount = document.getElementById('pointsCount');
-        this.drawingMode = document.getElementById('drawingMode');
-        this.drawingProgress = document.getElementById('drawingProgress');
-        this.progressFill = document.getElementById('progressFill');
-        this.progressText = document.getElementById('progressText');
-        this.helpButton = document.getElementById('helpButton');
-        this.helpPanel = document.getElementById('helpPanel');
-        this.closeHelp = document.getElementById('closeHelp');
+        // this.drawStatus = document.getElementById('drawStatus');
+        // this.pointsCount = document.getElementById('pointsCount');
+        // this.drawingMode = document.getElementById('drawingMode');
+        // this.drawingProgress = document.getElementById('drawingProgress');
+        // this.progressFill = document.getElementById('progressFill');
+        // this.progressText = document.getElementById('progressText');
+        // this.helpButton = document.getElementById('helpButton');
+        // this.helpPanel = document.getElementById('helpPanel');
+        // this.closeHelp = document.getElementById('closeHelp');
         
-        // Export modal DOM elements
-        this.exportPanelButton = document.getElementById('exportPanelButton');
-        this.exportModal = document.getElementById('exportModal');
-        this.closeExportModal = document.getElementById('closeExportModal');
-        this.exportOpenDriveBtn = document.getElementById('exportOpenDrive');
-        this.importOpenDriveInput = document.getElementById('importOpenDrive');
+        // 已隐藏的功能 - 导出/导入相关
+        // this.exportPanelButton = document.getElementById('exportPanelButton');
+        // this.exportModal = document.getElementById('exportModal');
+        // this.closeExportModal = document.getElementById('closeExportModal');
+        // this.exportOpenDriveBtn = document.getElementById('exportOpenDrive');
+        // this.importOpenDriveInput = document.getElementById('importOpenDrive');
         
-        console.log('🔍 构造函数中查找导出按钮:', this.exportPanelButton);
-        console.log('🔍 构造函数中查找模态对话框:', this.exportModal);
-        if (this.exportModal) {
-            console.log('🔍 模态对话框初始display值:', this.exportModal.style.display);
-        }
+        // 已隐藏的功能 - 导出相关调试信息
+        // console.log('🔍 构造函数中查找导出按钮:', this.exportPanelButton);
+        // console.log('🔍 构造函数中查找模态对话框:', this.exportModal);
+        // if (this.exportModal) {
+        //     console.log('🔍 模态对话框初始display值:', this.exportModal.style.display);
+        // }
         
         // PCD control panel DOM elements
         this.pcdControlsPanel = document.getElementById('pcdControlsPanel');
         
-        // Road control panel DOM elements
-        this.roadControlsPanel = document.getElementById('roadControlsPanel');
-        this.importJSONInput = document.getElementById('importJSON');
+        // 已隐藏的功能 - 道路控制面板相关
+        // this.roadControlsPanel = document.getElementById('roadControlsPanel');
+        // this.importJSONInput = document.getElementById('importJSON');
         
         this.init();
     }
     
     init() {
-        console.log('🚀 Initializing OpenDRIVE editor...');
+        console.log('🚀 初始化点云查看器...');
         
         if (typeof THREE === 'undefined') {
             this.showError('Three.js未加载，请刷新页面重试');
@@ -157,10 +159,10 @@ class OpenDriveEditor {
             this.initRoadControls();
             this.animate();
             
-            console.log('✅ OpenDRIVE editor initialization completed');
+            console.log('✅ 点云查看器初始化完成');
         } catch (error) {
             console.error('❌ 初始化失败:', error);
-            this.showError('编辑器初始化失败: ' + error.message);
+            this.showError('点云查看器初始化失败: ' + error.message);
         }
     }
     
@@ -364,17 +366,18 @@ class OpenDriveEditor {
     
     initEventListeners() {
         console.log('🎯 开始初始化事件监听器');
-        console.log('🔍 initEventListeners中导出按钮:', this.exportPanelButton);
+        // 已隐藏的功能 - 导出按钮调试信息
+        // console.log('🔍 initEventListeners中导出按钮:', this.exportPanelButton);
         
         // PCD文件选择
         this.pcdFileInput.addEventListener('change', (event) => {
             this.loadPCDFile(event);
         });
         
-        // 绘制模式切换
-        this.drawButton.addEventListener('click', () => {
-            this.toggleDrawingMode();
-        });
+        // 已隐藏的功能 - 绘制模式切换
+        // this.drawButton.addEventListener('click', () => {
+        //     this.toggleDrawingMode();
+        // });
         
         // 道路编辑按钮
         const startRoadEditBtn = document.getElementById('startRoadEdit');
@@ -449,88 +452,88 @@ class OpenDriveEditor {
             this.handleResize();
         });
         
-        // 键盘事件
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && this.isDrawingMode) {
-                this.toggleDrawingMode();
-            }
-            if (event.key === 'z' && event.ctrlKey && this.isDrawingMode) {
-                if (event.shiftKey) {
-                    this.redoLastAction();
-                } else {
-                    this.undoLastAction();
-                }
-            }
-            if (event.key === 'y' && event.ctrlKey && this.isDrawingMode) {
-                this.redoLastAction();
-            }
-            if (event.key === ' ' && !this.isDrawingMode) {
-                event.preventDefault();
-                this.toggleDrawingMode();
-            }
-            if (event.key === 'Delete' && this.isDrawingMode) {
-                this.deleteSelectedPoint();
-            }
-            if (event.key === 'h' && event.ctrlKey) {
-                event.preventDefault();
-                this.toggleHelpPanel();
-            }
-        });
+        // 已隐藏的功能 - 键盘事件（道路绘制相关）
+        // window.addEventListener('keydown', (event) => {
+        //     if (event.key === 'Escape' && this.isDrawingMode) {
+        //         this.toggleDrawingMode();
+        //     }
+        //     if (event.key === 'z' && event.ctrlKey && this.isDrawingMode) {
+        //         if (event.shiftKey) {
+        //             this.redoLastAction();
+        //         } else {
+        //             this.undoLastAction();
+        //         }
+        //     }
+        //     if (event.key === 'y' && event.ctrlKey && this.isDrawingMode) {
+        //         this.redoLastAction();
+        //     }
+        //     if (event.key === ' ' && !this.isDrawingMode) {
+        //         event.preventDefault();
+        //         this.toggleDrawingMode();
+        //     }
+        //     if (event.key === 'Delete' && this.isDrawingMode) {
+        //         this.deleteSelectedPoint();
+        //     }
+        //     if (event.key === 'h' && event.ctrlKey) {
+        //         event.preventDefault();
+        //         this.toggleHelpPanel();
+        //     }
+        // });
 
-        // 帮助面板事件
-        if (this.helpButton) {
-            this.helpButton.addEventListener('click', () => {
-                this.toggleHelpPanel();
-            });
-        }
+        // 已隐藏的功能 - 帮助面板事件
+        // if (this.helpButton) {
+        //     this.helpButton.addEventListener('click', () => {
+        //         this.toggleHelpPanel();
+        //     });
+        // }
         
-        if (this.closeHelp) {
-            this.closeHelp.addEventListener('click', () => {
-                this.toggleHelpPanel();
-            });
-        }
+        // if (this.closeHelp) {
+        //     this.closeHelp.addEventListener('click', () => {
+        //         this.toggleHelpPanel();
+        //     });
+        // }
 
-        // OpenDRIVE导入事件
-        if (this.importOpenDriveInput) {
-            this.importOpenDriveInput.addEventListener('change', (event) => {
-                this.importOpenDrive(event);
-            });
-        }
+        // 已隐藏的功能 - OpenDRIVE导入事件
+        // if (this.importOpenDriveInput) {
+        //     this.importOpenDriveInput.addEventListener('change', (event) => {
+        //         this.importOpenDrive(event);
+        //     });
+        // }
 
-        // 导出模态对话框按钮
-        if (this.exportPanelButton) {
-            console.log('✅ 导出按钮元素找到，添加事件监听器');
-            this.exportPanelButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🖱️ 导出按钮被点击！');
-                this.showExportModal();
-            });
-        } else {
-            console.error('❌ 导出按钮元素未找到');
-        }
+        // 已隐藏的功能 - 导出模态对话框按钮
+        // if (this.exportPanelButton) {
+        //     console.log('✅ 导出按钮元素找到，添加事件监听器');
+        //     this.exportPanelButton.addEventListener('click', (e) => {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //         console.log('🖱️ 导出按钮被点击！');
+        //         this.showExportModal();
+        //     });
+        // } else {
+        //     console.error('❌ 导出按钮元素未找到');
+        // }
 
-        // 关闭导出模态对话框按钮
-        if (this.closeExportModal) {
-            console.log('✅ 找到关闭按钮，添加事件监听器');
-            this.closeExportModal.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🖱️ 关闭按钮被点击！');
-                this.hideExportModal();
-            });
-        } else {
-            console.error('❌ 未找到关闭按钮元素');
-        }
+        // 已隐藏的功能 - 关闭导出模态对话框按钮
+        // if (this.closeExportModal) {
+        //     console.log('✅ 找到关闭按钮，添加事件监听器');
+        //     this.closeExportModal.addEventListener('click', (e) => {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //         console.log('🖱️ 关闭按钮被点击！');
+        //         this.hideExportModal();
+        //     });
+        // } else {
+        //     console.error('❌ 未找到关闭按钮元素');
+        // }
 
-        // 点击模态对话框背景关闭
-        if (this.exportModal) {
-            this.exportModal.addEventListener('click', (e) => {
-                if (e.target === this.exportModal) {
-                    this.hideExportModal();
-                }
-            });
-        }
+        // 已隐藏的功能 - 点击模态对话框背景关闭
+        // if (this.exportModal) {
+        //     this.exportModal.addEventListener('click', (e) => {
+        //         if (e.target === this.exportModal) {
+        //             this.hideExportModal();
+        //         }
+        //     });
+        // }
         
         console.log('✅ 事件监听器初始化完成');
     }
@@ -933,8 +936,8 @@ class OpenDriveEditor {
             try {
                 await this.parsePCDData(e.target.result, file.name);
                 // 显示100%完成
-                this.progressFill.style.width = '100%';
-                this.progressText.textContent = '加载完成！';
+                // this.progressFill.style.width = '100%'; // 已隐藏的功能
+                // this.progressText.textContent = '加载完成！'; // 已隐藏的功能
                 setTimeout(() => {
                     this.showPCDLoading(false);
                 }, 500);
@@ -2330,106 +2333,114 @@ class OpenDriveEditor {
         console.log(`📷 相机已调整到点云: 中心${center.x.toFixed(1)}, ${center.y.toFixed(1)}, ${center.z.toFixed(1)}`);
     }
     
-    toggleDrawingMode() {
-        this.isDrawingMode = !this.isDrawingMode;
-        
-        if (this.isDrawingMode) {
-            this.startDrawing();
-        } else {
-            this.stopDrawing();
-        }
-    }
+    // 已隐藏的功能 - 绘制模式切换
+    // toggleDrawingMode() {
+    //     this.isDrawingMode = !this.isDrawingMode;
+    //     
+    //     if (this.isDrawingMode) {
+    //         this.startDrawing();
+    //     } else {
+    //         this.stopDrawing();
+    //     }
+    // }
 
-    startDrawing() {
-        this.drawButton.textContent = '结束画路';
-        this.drawButton.classList.add('active');
-        this.drawStatus.textContent = '绘制模式：开启';
-        this.controls.enabled = false;
-        
-        // 显示进度条
-        if (this.drawingProgress) {
-            this.drawingProgress.style.display = 'block';
-        }
-        
-        // 显示道路控制面板
-        if (this.roadControlsPanel) {
-            this.roadControlsPanel.style.display = 'block';
-        }
-        
-        // 更新绘制模式显示
-        this.updateDrawingMode('直线');
-        
-        // 开始绘制进度
-        this.updateDrawingProgress(0, '准备绘制...');
-        
-        console.log('🛣️ 开始道路绘制模式');
-    }
+    // 已隐藏的功能 - 开始绘制
+    // startDrawing() {
+    //     this.drawButton.textContent = '结束画路';
+    //     this.drawButton.classList.add('active');
+    //     this.drawStatus.textContent = '绘制模式：开启';
+    //     this.controls.enabled = false;
+    //     
+    //     // 显示进度条
+    //     if (this.drawingProgress) {
+    //         this.drawingProgress.style.display = 'block';
+    //     }
+    //     
+    //     // 显示道路控制面板
+    //     if (this.roadControlsPanel) {
+    //         this.roadControlsPanel.style.display = 'block';
+    //     }
+    //     
+    //     // 更新绘制模式显示
+    //     this.updateDrawingMode('直线');
+    //     
+    //     // 开始绘制进度
+    //     this.updateDrawingProgress(0, '准备绘制...');
+    //     
+    //     console.log('🛣️ 开始道路绘制模式');
+    // }
 
-    stopDrawing() {
-        this.drawButton.textContent = '开始画路';
-        this.drawButton.classList.remove('active');
-        this.drawStatus.textContent = '绘制模式：关闭';
-        this.controls.enabled = true;
-        
-        // 隐藏进度条
-        if (this.drawingProgress) {
-            this.drawingProgress.style.display = 'none';
-        }
-        
-        // 隐藏道路控制面板
-        if (this.roadControlsPanel) {
-            this.roadControlsPanel.style.display = 'none';
-        }
-        
-        this.finishRoad();
-        
-        console.log('🛑 结束道路绘制模式');
-    }
+    // 已隐藏的功能 - 停止绘制
+    // stopDrawing() {
+    //     this.drawButton.textContent = '开始画路';
+    //     this.drawButton.classList.remove('active');
+    //     this.drawStatus.textContent = '绘制模式：关闭';
+    //     this.controls.enabled = true;
+    //     
+    //     // 隐藏进度条
+    //     if (this.drawingProgress) {
+    //         this.drawingProgress.style.display = 'none';
+    //     }
+    //     
+    //     // 隐藏道路控制面板
+    //     if (this.roadControlsPanel) {
+    //         this.roadControlsPanel.style.display = 'none';
+    //     }
+    //     
+    //     this.finishRoad();
+    //     
+    //     console.log('🛑 结束道路绘制模式');
+    // }
 
-    updateDrawingMode(mode) {
-        if (this.drawingMode) {
-            this.drawingMode.textContent = `模式：${mode}`;
-        }
-    }
+    // 已隐藏的功能 - 更新绘制模式
+    // updateDrawingMode(mode) {
+    //     if (this.drawingMode) {
+    //         this.drawingMode.textContent = `模式：${mode}`;
+    //     }
+    // }
 
-    updateDrawingProgress(percentage, text) {
-        if (this.progressFill) {
-            this.progressFill.style.width = `${percentage}%`;
-        }
-        if (this.progressText) {
-            this.progressText.textContent = text;
-        }
-    }
+    // 已隐藏的功能 - 更新绘制进度
+    // updateDrawingProgress(percentage, text) {
+    //     if (this.progressFill) {
+    //         this.progressFill.style.width = `${percentage}%`;
+    //     }
+    //     if (this.progressText) {
+    //         this.progressText.textContent = text;
+    //     }
+    // }
 
-    toggleHelpPanel() {
-        if (this.helpPanel) {
-            const isVisible = this.helpPanel.style.display !== 'none';
-            this.helpPanel.style.display = isVisible ? 'none' : 'block';
-        }
-    }
+    // 已隐藏的功能 - 帮助面板切换
+    // toggleHelpPanel() {
+    //     if (this.helpPanel) {
+    //         const isVisible = this.helpPanel.style.display !== 'none';
+    //         this.helpPanel.style.display = isVisible ? 'none' : 'block';
+    //     }
+    // }
 
-    showExportModal() {
-        console.log('🔄 尝试显示模态对话框');
-        if (this.exportModal) {
-            console.log('🔍 模态对话框当前display值:', this.exportModal.style.display);
-            this.exportModal.classList.add('show');
-            console.log('✅ 模态对话框已显示');
-            // 更新导出信息
-            this.updateExportPanelInfo();
-        } else {
-            console.error('❌ 未找到模态对话框元素');
-        }
-    }
+    // 已隐藏的功能 - 显示导出模态对话框
+    // showExportModal() {
+    //     console.log('🔄 尝试显示模态对话框');
+    //     if (this.exportModal) {
+    //         console.log('🔍 模态对话框当前display值:', this.exportModal.style.display);
+    //         this.exportModal.classList.add('show');
+    //         console.log('✅ 模态对话框已显示');
+    //         // 更新导出信息
+    //         this.updateExportPanelInfo();
+    //     } else {
+    //         console.error('❌ 未找到模态对话框元素');
+    //     }
+    // }
 
-    hideExportModal() {
-        console.log('🔄 尝试隐藏模态对话框');
-        if (this.exportModal) {
-            this.exportModal.classList.remove('show');
-            console.log('✅ 模态对话框已隐藏');
-        } else {
-            console.error('❌ 未找到模态对话框元素');
-        }
-    }
+    // 已隐藏的功能 - 隐藏导出模态对话框
+    // hideExportModal() {
+    //     console.log('🔄 尝试隐藏模态对话框');
+    //     if (this.exportModal) {
+    //         this.exportModal.classList.remove('show');
+    //         console.log('✅ 模态对话框已隐藏');
+    //     } else {
+    //         console.error('❌ 未找到模态对话框元素');
+    //     }
+    // }
 
     updateExportPanelInfo() {
         // 更新道路数量
@@ -2588,8 +2599,8 @@ class OpenDriveEditor {
         this.updateRoadInfo();
         
         // 更新绘制进度
-        const progress = Math.min((this.currentRoadPoints.length / 10) * 100, 100);
-        this.updateDrawingProgress(progress, `已添加 ${this.currentRoadPoints.length} 个点`);
+        // const progress = Math.min((this.currentRoadPoints.length / 10) * 100, 100);
+        // this.updateDrawingProgress(progress, `已添加 ${this.currentRoadPoints.length} 个点`); // 已隐藏的功能
         
         console.log(`📍 添加路径点: (${point.x.toFixed(2)}, ${point.y.toFixed(2)}, ${point.z.toFixed(2)})`);
     }
@@ -3448,7 +3459,7 @@ class OpenDriveEditor {
         const length = this.calculateRoadLength();
         
         // 更新UI显示
-        this.pointsCount.textContent = `当前路径点数：${pointCount}`;
+        // this.pointsCount.textContent = `当前路径点数：${pointCount}`; // 已隐藏的功能
         
         const currentRoadPointsElement = document.getElementById('currentRoadPoints');
         const currentRoadLengthElement = document.getElementById('currentRoadLength');
@@ -3963,22 +3974,23 @@ class OpenDriveEditor {
         this.updateRoadCounts();
         this.updateExportPanelInfo();
 
-        // 更新按钮状态
-        const drawButton = document.getElementById('drawButton');
-        if (drawButton) {
-            drawButton.textContent = '开始画路';
-            drawButton.classList.remove('active');
-        }
+        // 已隐藏的功能 - 更新按钮状态
+        // const drawButton = document.getElementById('drawButton');
+        // if (drawButton) {
+        //     drawButton.textContent = '开始画路';
+        //     drawButton.classList.remove('active');
+        // }
 
-        // 隐藏面板
-        const roadControlsPanel = document.getElementById('roadControlsPanel');
-        if (roadControlsPanel) {
-            roadControlsPanel.style.display = 'none';
-        }
+        // 已隐藏的功能 - 隐藏面板
+        // const roadControlsPanel = document.getElementById('roadControlsPanel');
+        // if (roadControlsPanel) {
+        //     roadControlsPanel.style.display = 'none';
+        // }
 
-        if (this.exportModal) {
-            this.exportModal.style.display = 'none';
-        }
+        // 已隐藏的功能 - 隐藏导出模态对话框
+        // if (this.exportModal) {
+        //     this.exportModal.style.display = 'none';
+        // }
 
         console.log('✅ 所有数据已清空');
         this.showSuccess('所有数据已清空');
@@ -4000,33 +4012,39 @@ class OpenDriveEditor {
     }
     
     showPCDLoading(show, message = '') {
-        if (this.drawingProgress) {
-            if (show) {
-                this.drawingProgress.style.display = 'block';
-                this.progressText.textContent = message;
-                this.progressFill.style.width = '0%';
-                
-                // 模拟加载进度
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += Math.random() * 15;
-                    if (progress > 90) progress = 90;
-                    this.progressFill.style.width = progress + '%';
-                    
-                    if (!this.drawingProgress.style.display || this.drawingProgress.style.display === 'none') {
-                        clearInterval(interval);
-                    }
-                }, 200);
-                
-                // 保存interval ID以便清理
-                this.pcdLoadingInterval = interval;
-            } else {
-                this.drawingProgress.style.display = 'none';
-                if (this.pcdLoadingInterval) {
-                    clearInterval(this.pcdLoadingInterval);
-                    this.pcdLoadingInterval = null;
-                }
-            }
+        // 已隐藏的功能 - 绘制进度条相关
+        // if (this.drawingProgress) {
+        //     if (show) {
+        //         this.drawingProgress.style.display = 'block';
+        //         this.progressText.textContent = message;
+        //         this.progressFill.style.width = '0%';
+        //         
+        //         // 模拟加载进度
+        //         let progress = 0;
+        //         const interval = setInterval(() => {
+        //             progress += Math.random() * 15;
+        //             if (progress > 90) progress = 90;
+        //             this.progressFill.style.width = progress + '%';
+        //             
+        //             if (!this.drawingProgress.style.display || this.drawingProgress.style.display === 'none') {
+        //                 clearInterval(interval);
+        //             }
+        //         }, 200);
+        //         
+        //         // 保存interval ID以便清理
+        //         this.pcdLoadingInterval = interval;
+        //     } else {
+        //         this.drawingProgress.style.display = 'none';
+        //         if (this.pcdLoadingInterval) {
+        //             clearInterval(this.pcdLoadingInterval);
+        //             this.pcdLoadingInterval = null;
+        //         }
+        //     }
+        // }
+        
+        // 使用loadingIndicator显示加载状态
+        if (this.loadingIndicator) {
+            this.loadingIndicator.style.display = show ? 'block' : 'none';
         }
     }
     
@@ -6619,8 +6637,8 @@ class OpenDriveEditor {
 
 // 初始化函数，由HTML中的依赖检查调用
 window.initOpenDriveEditor = function() {
-    console.log('🌟 启动OpenDRIVE地图编辑器...');
-    console.log('🔍 开始创建OpenDriveEditor实例');
+    console.log('🌟 启动点云在线查看器...');
+    console.log('🔍 开始创建点云查看器实例');
     window.editor = new OpenDriveEditor();
-    console.log('✅ OpenDriveEditor实例创建完成');
+    console.log('✅ 点云查看器实例创建完成');
 };
